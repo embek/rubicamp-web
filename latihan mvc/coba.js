@@ -1,28 +1,9 @@
-function ubahOpsi(opsi, tipe) {
-    switch (tipe) {
-        case 'NT':
-            switch (opsi) {
-                case 1: return 'Mahasiswa';
-                case 2: return 'Jurusan';
-                case 3: return 'Dosen';
-                case 4: return 'Matakuliah';
-                case 5: return 'Kontrak';
-            }
-            break;
-        case 'pk':
-            switch (opsi) {
-                case 1: return 'nim';
-                case 2: return 'kode_jurusan';
-                case 3: return 'nip';
-                case 4: return 'kode_matkul';
-                case 5: return 'id';
-            }
-            break;
-        case 'nt':
-            return ubahOpsi(opsi, 'NT').toLowerCase();
-        case 'kolom':
-            return ubahKolom(ubahOpsi(opsi, 'pk'));
-    }
-}
 
-console.log()
+a = '1997-04-02'
+b = 'abcd'
+c = '20-20-2000'
+
+dateRegex = /(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])/;
+console.log(dateRegex.test(a))
+console.log(dateRegex.test(b))
+console.log(dateRegex.test(c))

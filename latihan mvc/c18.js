@@ -32,13 +32,14 @@ function printTable(sql, callback) {
 function validasi(answer, tipe, callback) {
     switch (tipe) {
         case 'nim':
-            if (answer.length != 7) {
+            if (answer.length != 10) {
                 console.log('Format NIM salah')
                 callback(false);
             } else callback(true);
             break;
         case 'tgl_lahir':
-            if (answer.length != 10) {
+            let dateRegex = /(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])/;
+            if (answer.length != 10 || !dateRegex.test(answer)) {
                 console.log('Format tanggal lahir salah')
                 callback(false);
             } else callback(true);
@@ -81,7 +82,7 @@ function validasi(answer, tipe, callback) {
             break;
         case 'id':
             if (parseInt(answer) != answer) {
-                console.log('Format opsi salah')
+                console.log('Format id salah')
                 callback(false);
             } else callback(true);
             break;
