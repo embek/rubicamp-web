@@ -29,6 +29,66 @@ function printTable(sql, callback) {
     })
 }
 
+function validasi(answer, tipe, callback) {
+    switch (tipe) {
+        case 'nim':
+            if (answer.length != 7) {
+                console.log('Format NIM salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'tgl_lahir':
+            if (answer.length != 10) {
+                console.log('Format tanggal lahir salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'kode_jurusan':
+            if (answer.length != 4) {
+                console.log('Format kode jurusan salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'nip':
+            if (answer.length != 5) {
+                console.log('Format NIP salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'kode_matkul':
+            if (answer.length != 4) {
+                console.log('Format kode matakuliah salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'sks':
+            if (parseInt(answer) != answer) {
+                console.log('Format SKS salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'nilai':
+            if (answer.length > 3) {
+                console.log('Format nilai salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'opsi':
+            if (answer.length > 1 && parseInt(answer) != answer) {
+                console.log('Format opsi salah')
+                callback(false);
+            } else callback(true);
+            break;
+        case 'id':
+            if (parseInt(answer) != answer) {
+                console.log('Format opsi salah')
+                callback(false);
+            } else callback(true);
+            break;
+        default: callback(true);
+    }
+}
+
 function ubahKolom(nama_kolom) {
     switch (nama_kolom) {
         case 'nim': return 'NIM';
@@ -135,7 +195,6 @@ function cariData(opsi, identitas, callback) {
             }
         })
     }
-
 }
 
 function tambahData(opsi, arrayData = [], callback) {
@@ -185,8 +244,7 @@ function login() {
             else if (rows.length == 0) {
                 console.log('username tidak terdaftar')
                 login();
-            }
-            else {
+            } else {
                 rl.question('password   : ', cekPass => {
                     if (rows[0].pass == cekPass) {
                         console.log(garis);
@@ -211,7 +269,9 @@ function menu(opsi1) {
             console.log(`silahkan pilih opsi di bawah ini :`);
             console.log(`[1] Mahasiswa\n[2] Jurusan\n[3] Dosen\n[4] Matakuliah\n[5] Kontrak\n[6] Keluar`);
             console.log(garis);
-            rl.question(`Masukkan salah satu nomor dari opsi di atas : `, answer => menu(parseInt(answer)));
+            rl.question(`Masukkan salah satu nomor dari opsi di atas : `, answer => {
+                validasi(answer, 'opsi', (valid) => valid ? menu(parseInt(answer)) : menu(0))
+            });
             break;
         case 1:
         case 2:
@@ -226,18 +286,22 @@ function menu(opsi1) {
             }
             console.log(garis);
             rl.question(`Masukkan salah satu nomor dari opsi di atas : `, answer => {
-                switch (opsi1) {
-                    case 1: mahasiswa(parseInt(answer))
-                        break;
-                    case 2: jurusan(parseInt(answer))
-                        break;
-                    case 3: dosen(parseInt(answer))
-                        break;
-                    case 4: matkul(parseInt(answer))
-                        break;
-                    case 5: kontrak(parseInt(answer))
-                        break;
-                }
+                validasi(answer, 'opsi', (valid) => {
+                    if (valid) {
+                        switch (opsi1) {
+                            case 1: mahasiswa(parseInt(answer))
+                                break;
+                            case 2: jurusan(parseInt(answer))
+                                break;
+                            case 3: dosen(parseInt(answer))
+                                break;
+                            case 4: matkul(parseInt(answer))
+                                break;
+                            case 5: kontrak(parseInt(answer))
+                                break;
+                        }
+                    } else menu(opsi1);
+                });
             });
             break;
         case 6:
@@ -252,36 +316,56 @@ function mahasiswa(opsi2) {
             daftarData(1, () => menu(1));
             break;
         case 2:
-            rl.question(`Masukkan NIM mahasiswa: `, answer => cariData(1, answer, () => menu(1)));
+            rl.question(`Masukkan NIM mahasiswa: `, answer => {
+                validasi(answer, 'nim', (valid) => {
+                    if (valid) { cariData(1, answer, () => menu(1)) }
+                    else menu(1);
+                });
+            });
             break;
         case 3:
             var jawaban = [];
             console.log(`Lengkapi data di bawah ini :`)
             daftarData(1, () => {
                 rl.question('NIM\t: ', answer => {
-                    jawaban.push(answer.trim());
-                    rl.question('Nama\t: ', answer => {
-                        jawaban.push(answer.trim());
-                        rl.question('Tanggal Lahir\t: ', answer => {
+                    validasi(answer, 'nim', (valid) => {
+                        if (valid) {
                             jawaban.push(answer.trim());
-                            rl.question('Alamat\t: ', answer => {
+                            rl.question('Nama\t: ', answer => {
                                 jawaban.push(answer.trim());
-                                daftarData(2, () => {
-                                    rl.question('Kode Jurusan\t: ', answer => {
-                                        jawaban.push(answer.trim());
-                                        tambahData(1, jawaban, () => daftarData(1, () => menu(1)));
+                                rl.question('Tanggal Lahir\t: ', answer => {
+                                    validasi(answer, 'tgl_lahir', (valid) => {
+                                        if (valid) {
+                                            jawaban.push(answer.trim());
+                                            rl.question('Alamat\t: ', answer => {
+                                                jawaban.push(answer.trim());
+                                                daftarData(2, () => {
+                                                    rl.question('Kode Jurusan\t: ', answer => {
+                                                        validasi(answer, 'kode_jurusan', (valid) => {
+                                                            if (valid) {
+                                                                jawaban.push(answer.trim());
+                                                                tambahData(1, jawaban, () => daftarData(1, () => menu(1)));
+                                                            } else menu(1);
+                                                        })
+                                                    })
+                                                });
+                                            })
+                                        } else menu(1);
                                     })
-                                });
-
+                                })
                             })
-                        })
-
+                        } else menu(1);
                     })
                 })
             });
             break;
         case 4:
-            rl.question(`Masukkan NIM mahasiswa : `, answer => hapusData(1, answer, () => menu(1)));
+            rl.question(`Masukkan NIM mahasiswa : `, answer => {
+                validasi(answer, 'nim', (valid) => {
+                    if (valid) hapusData(1, answer, () => menu(1))
+                    else menu(1);
+                })
+            });
             break;
         default:
             menu(0);
@@ -296,23 +380,38 @@ function jurusan(opsi2) {
             daftarData(2, () => menu(2));
             break;
         case 2:
-            rl.question(`Masukkan Kode Jurusan : `, answer => cariData(2, answer, () => menu(2)));
+            rl.question(`Masukkan Kode Jurusan : `, answer => {
+                validasi(answer, 'kode_jurusan', (valid) => {
+                    if (valid) cariData(2, answer, () => menu(2))
+                    else menu(2);
+                })
+            });
             break;
         case 3:
             var jawaban = [];
             console.log(`Lengkapi data di bawah ini :`)
             daftarData(2, () => {
                 rl.question('Kode Jurusan\t: ', answer => {
-                    jawaban.push(answer.trim());
-                    rl.question('Nama Jurusan\t: ', answer => {
-                        jawaban.push(answer.trim());
-                        tambahData(2, jawaban, () => menu(2));
+                    validasi(answer, 'kode_jurusan', (valid) => {
+                        if (valid) {
+                            jawaban.push(answer.trim());
+                            rl.question('Nama Jurusan\t: ', answer => {
+                                jawaban.push(answer.trim());
+                                tambahData(2, jawaban, () => menu(2));
+                            })
+                        } else menu(2);
                     })
                 })
             });
             break;
         case 4:
-            rl.question(`Masukkan Kode Jurusan : `, answer => hapusData(2, answer, () => menu(2)));
+            rl.question(`Masukkan Kode Jurusan : `, answer => {
+                validasi(answer, 'kode_jurusan', (valid) => {
+                    if (valid) hapusData(2, answer, () => menu(2))
+                    else menu(2);
+                }
+                )
+            });
             break;
         default:
             menu(0);
@@ -327,23 +426,37 @@ function dosen(opsi2) {
             daftarData(3, () => menu(3));
             break;
         case 2:
-            rl.question(`Masukkan NIP : `, answer => cariData(3, answer, () => menu(3)));
+            rl.question(`Masukkan NIP : `, answer => {
+                validasi(answer, 'nip', (valid) => {
+                    if (valid) cariData(3, answer, () => menu(3))
+                    else menu(3);
+                })
+            });
             break;
         case 3:
             var jawaban = [];
             console.log(`Lengkapi data di bawah ini :`)
             daftarData(3, () => {
                 rl.question('NIP\t: ', answer => {
-                    jawaban.push(answer.trim());
-                    rl.question('Nama Dosen\t: ', answer => {
-                        jawaban.push(answer.trim());
-                        tambahData(3, jawaban, () => menu(3));
+                    validasi(answer, 'nip', (valid) => {
+                        if (valid) {
+                            jawaban.push(answer.trim());
+                            rl.question('Nama Dosen\t: ', answer => {
+                                jawaban.push(answer.trim());
+                                tambahData(3, jawaban, () => menu(3));
+                            })
+                        } else menu(3);
                     })
                 })
             });
             break;
         case 4:
-            rl.question(`Masukkan NIP : `, answer => hapusData(3, answer, () => menu(3)));
+            rl.question(`Masukkan NIP : `, answer => {
+                validasi(answer, 'nip', (valid) => {
+                    if (valid) hapusData(3, answer, () => menu(3))
+                    else menu(3);
+                })
+            });
             break;
         default:
             menu(0);
@@ -358,26 +471,44 @@ function matkul(opsi2) {
             daftarData(4, () => menu(4));
             break;
         case 2:
-            rl.question(`Masukkan Kode Matakuliah: `, answer => cariData(4, answer, () => menu(4)));
+            rl.question(`Masukkan Kode Matakuliah: `, answer => {
+                validasi(answer, 'kode_matkul', (valid) => {
+                    if (valid) cariData(4, answer, () => menu(4))
+                    else menu(4);
+                })
+            });
             break;
         case 3:
             var jawaban = [];
             console.log(`Lengkapi data di bawah ini :`)
             daftarData(4, () => {
                 rl.question('Kode Matakuliah\t: ', answer => {
-                    jawaban.push(answer.trim());
-                    rl.question('Nama Matakuliah\t: ', answer => {
-                        jawaban.push(answer.trim());
-                        rl.question('SKS\t: ', answer => {
+                    validasi(answer, 'kode_matkul', (valid) => {
+                        if (valid) {
                             jawaban.push(answer.trim());
-                            tambahData(4, jawaban, () => menu(4));
-                        })
+                            rl.question('Nama Matakuliah\t: ', answer => {
+                                jawaban.push(answer.trim());
+                                rl.question('SKS\t: ', answer => {
+                                    validasi(answer, 'sks', (valid) => {
+                                        if (valid) {
+                                            jawaban.push(answer.trim());
+                                            tambahData(4, jawaban, () => menu(4));
+                                        } else menu(4);
+                                    })
+                                })
+                            })
+                        } else menu(4);
                     })
                 })
             });
             break;
         case 4:
-            rl.question(`Masukkan Kode Matakuliah : `, answer => hapusData(4, answer, () => menu(4)));
+            rl.question(`Masukkan Kode Matakuliah : `, answer => {
+                validasi(answer, 'kode_matkul', (valid) => {
+                    if (valid) hapusData(4, answer, () => menu(4))
+                    else menu(4);
+                })
+            });
             break;
         default:
             menu(0);
@@ -393,7 +524,12 @@ function kontrak(opsi2) {
             break;
         case 2:
             daftarData(1, () => {
-                rl.question(`Masukkan NIM mahasiswa: `, answer => cariData(5, answer, () => menu(5)))
+                rl.question(`Masukkan NIM mahasiswa: `, answer => {
+                    validasi(answer, 'nim', (valid) => {
+                        if (valid) cariData(5, answer, () => menu(5))
+                        else menu(5);
+                    })
+                })
             })
             break;
         case 3:
@@ -401,17 +537,29 @@ function kontrak(opsi2) {
             console.log(`Lengkapi data di bawah ini :`)
             daftarData(1, () => {
                 rl.question('Masukkan NIM\t: ', answer => {
-                    jawaban.push(answer.trim());
-                    daftarData(4, () => {
-                        rl.question('Masukkan Kode Matakuliah\t: ', answer => {
+                    validasi(answer, 'nim', (valid) => {
+                        if (valid) {
                             jawaban.push(answer.trim());
-                            daftarData(3, () => {
-                                rl.question('Masukkan NIP Dosen\t: ', answer => {
-                                    jawaban.push(answer.trim());
-                                    tambahData(5, jawaban, () => menu(5));
+                            daftarData(4, () => {
+                                rl.question('Masukkan Kode Matakuliah\t: ', answer => {
+                                    validasi(answer, 'kode_matkul', (valid) => {
+                                        if (valid) {
+                                            jawaban.push(answer.trim());
+                                            daftarData(3, () => {
+                                                rl.question('Masukkan NIP Dosen\t: ', answer => {
+                                                    validasi(answer, 'nip', (valid) => {
+                                                        if (valid) {
+                                                            jawaban.push(answer.trim());
+                                                            tambahData(5, jawaban, () => menu(5));
+                                                        } else menu(5);
+                                                    })
+                                                })
+                                            })
+                                        } else menu(5);
+                                    })
                                 })
                             })
-                        })
+                        } else menu(5);
                     })
                 })
             });
@@ -423,23 +571,31 @@ function kontrak(opsi2) {
             var jawaban = [];
             daftarData(5, () => {
                 rl.question(`Masukkan NIM mahasiswa :`, answer => {
-                    jawaban.push(answer.trim());
-                    console.log(`Detail mahasiswa dengan NIM '${answer}' :`)
-                    sql = `SELECT id,nama_matkul,nilai FROM kontrak LEFT JOIN matakuliah USING(kode_matkul) WHERE nim='${answer}'`;
-                    printTable(sql, () => {
-                        rl.question(`Masukkan id yang akan diubah nilainya :`, answer => {
+                    validasi(answer, 'nim', (valid) => {
+                        if (valid) {
                             jawaban.push(answer.trim());
-                            rl.question(`tulis nilai yang baru :`, answer => {
-                                sql = `UPDATE kontrak SET nilai='${answer.trim()}' WHERE id='${jawaban[1]}'`;
-                                db.run(sql, (err) => {
-                                    if (err) console.log('gagal update nilai')
-                                    else {
-                                        console.log(`nilai telah diupdate`);
-                                        daftarData(5, () => menu(5));
-                                    }
+                            console.log(`Detail mahasiswa dengan NIM '${answer}' :`)
+                            sql = `SELECT id,nama_matkul,nilai FROM kontrak LEFT JOIN matakuliah USING(kode_matkul) WHERE nim='${answer}'`;
+                            printTable(sql, () => {
+                                rl.question(`Masukkan id yang akan diubah nilainya :`, answer => {
+                                    jawaban.push(answer.trim());
+                                    rl.question(`tulis nilai yang baru :`, answer => {
+                                        validasi(answer, 'nilai', (valid) => {
+                                            if (valid) {
+                                                sql = `UPDATE kontrak SET nilai='${answer.trim()}' WHERE id='${jawaban[1]}'`;
+                                                db.run(sql, (err) => {
+                                                    if (err) console.log('gagal update nilai')
+                                                    else {
+                                                        console.log(`nilai telah diupdate`);
+                                                        daftarData(5, () => menu(5));
+                                                    }
+                                                })
+                                            } else menu(5);
+                                        })
+                                    })
                                 })
                             })
-                        })
+                        } else menu(5);
                     })
                 })
             })
