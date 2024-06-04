@@ -8,7 +8,15 @@ class Kontrak {
         let sql = 'SELECT nim,nama_mahasiswa,nama_matkul,nama_dosen,nilai FROM kontrak LEFT JOIN dosen USING(nip)';
         db.all(sql, (err, rows) => {
             if (err) console.log(err, `gagal cetak daftar kontrak`)
-            else cetak(rows, callback)
+            else cetak(rows, callback);
+        })
+    }
+
+    static daftarKontrakNim(nim, callback = () => { }) {
+        let sql = `SELECT id,nama_matkul,nilai FROM kontrak LEFT JOIN matakuliah USING(kode_matkul) WHERE nim='${nim}'`;
+        db.all(sql, (err, rows) => {
+            if (err) console.log(err, `gagal cetak daftar kontrak`)
+            else cetak(rows, callback);
         })
     }
 

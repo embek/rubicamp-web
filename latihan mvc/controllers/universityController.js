@@ -13,7 +13,7 @@ function cetak(rows, callback = () => { }) {
     callback();
 }
 
-function validasi(answer, tipe, callback) {
+function validasi(answer, tipe, callback = () => { }) {
     switch (tipe) {
         case 'nim':
             if (answer.length != 10) {
@@ -120,22 +120,24 @@ function ubahOpsi(opsi, tipe) {
     }
 }
 
-function daftar(opsi, callback) {
+function daftar(opsi, nim = '', callback = () => { }) {
     switch (opsi) {
-        case 1: Mahasiswa.daftarMahasiswa((sql) => printTabel(sql, callback));
+        case 1: Mahasiswa.daftarMahasiswa((rows) => cetak(rows, callback));
             break;
-        case 2: Jurusan.daftarJurusan((sql) => printTabel(sql, callback));
+        case 2: Jurusan.daftarJurusan((rows) => cetak(rows, callback));
             break;
-        case 3: Dosen.daftarDosen((sql) => printTabel(sql, callback));
+        case 3: Dosen.daftarDosen((rows) => cetak(rows, callback));
             break;
-        case 4: Matkul.daftarMatkul((sql) => printTabel(sql, callback));
+        case 4: Matkul.daftarMatkul((rows) => cetak(rows, callback));
             break;
-        case 5: Kontrak.daftarKontrak((sql) => printTabel(sql, callback));
+        case 5: Kontrak.daftarKontrak((rows) => cetak(rows, callback));
+            break;
+        case 6: Kontrak.daftarKontrakNim(nim, (rows) => cetak(rows, callback));
             break;
     }
 }
 
-function cari(opsi, identitas, callback) {
+function cari(opsi, identitas, callback = () => { }) {
     switch (opsi) {
         case 1:
             break;
@@ -150,7 +152,7 @@ function cari(opsi, identitas, callback) {
     }
 }
 
-function tambah(opsi, arrayData = [], callback) {
+function tambah(opsi, arrayData = [], callback = () => { }) {
     switch (opsi) {
         case 1: Mahasiswa.cariMahasiswa(identitas, callback);
             break;
@@ -166,21 +168,23 @@ function tambah(opsi, arrayData = [], callback) {
 }
 
 
-function hapus(opsi, identitas, callback) {
-    sql = `DELETE FROM ${ubahOpsi(opsi, 'nt')} WHERE ${ubahOpsi(opsi, 'pk')} = '${identitas}'`;
-    // console.log(sql);
-    db.run(sql, err => {
-        if (err) console.log('gagal hapus data')
-        else console.log(`Data ${ubahOpsi(opsi, 'NT')} ${identitas}, telah dihapus`)
-        console.log();
-        console.log(garis);
-        callback();
-    })
+function hapus(opsi, identitas, callback = () => { }) {
+    switch (opsi) {
+        case 1: Mahasiswa.hapusMahasiswa(identitas, callback);
+            break;
+        case 2: Jurusan.hapusJurusan(identitas, callback);
+            break;
+        case 3: Dosen.hapusDosen(identitas, callback);
+            break;
+        case 4: Matkul.hapusMatkul(identitas, callback);
+            break;
+        case 5: Kontrak.hapusKontrak(identitas, callback);
+            break;
+    }
 }
 
-function daftar(rows, callback) {
-    Object.keys(rows[0]).forEach(key => console.log(`${ubahKolom(key)} : ${rows[0][key]}`));
-    callback();
+function update(id, nilai, callback) {
+    Kontrak.updateNilai(id, nilai, callback);
 }
 
-export default { cetak, validasi, ubahOpsi, ubahKolom, daftar }
+export { cetak, validasi, ubahOpsi, ubahKolom, daftar, hapus, cari }
