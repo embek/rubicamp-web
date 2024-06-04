@@ -2,5 +2,21 @@
   "dependencies": {
     "cli-table": "^0.3.11",
     "sqlite3": "^5.1.7"
-  }
+  },
+  "name": "universitas",
+  "version": "1.0.0",
+  "description": "manajemen data universitas",
+  "main": "universitas.js",
+  "type": "module",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "import",
+    "es6"
+  ],
+  "author": "Adzka",
+  "license": "ISC"
 }
