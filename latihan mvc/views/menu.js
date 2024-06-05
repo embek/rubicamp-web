@@ -414,7 +414,7 @@ function kontrak(opsi2 = '', arrayData) {
         case '53':
             rl.question(`tulis nilai yang baru :`, nilai => {
                 validasi(nilai, 'nilai', (valid) => {
-                    if (valid) update(jawaban[1], nilai, daftar(5, () => menu(5)))
+                    if (valid) update(jawaban[1], nilai, () => daftar(5, () => menu(5)))
                     else kontrak('53', jawaban);
                 })
             })

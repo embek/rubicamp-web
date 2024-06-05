@@ -6,14 +6,14 @@ const Matakuliah = require('./../models/Matakuliah.js');
 const Kontrak = require('./../models/Kontrak.js');
 
 function cetakData(rows, callback) {
-    console.log('masuk cetak data');
+    // console.log('masuk cetak data');
     Object.keys(rows[0]).forEach(key => console.log(`${ubahKolom(key)} : ${rows[0][key]}`));
     console.log();
     callback();
 }
 
 function cetakTabel(rows, callback = () => { }) {
-    console.log('masuk cetak tabel');
+    // console.log('masuk cetak tabel');
     var judul = [];
     Object.keys(rows[0]).forEach(nama_kolom => judul.push(ubahKolom(nama_kolom)));
     var table = new Table({
@@ -26,7 +26,7 @@ function cetakTabel(rows, callback = () => { }) {
 }
 
 function daftar(opsi, nim = '', callback) {
-    console.log('masuk daftar');
+    // console.log('masuk daftar');
     if (typeof arguments[1] === 'function') {
         switch (opsi) {
             case 1: Mahasiswa.daftarMahasiswa((rows) => cetakTabel(rows, arguments[1]));
@@ -44,7 +44,7 @@ function daftar(opsi, nim = '', callback) {
 }
 
 function cari(opsi, identitas, callback) {
-    console.log('masuk cari');
+    // console.log('masuk cari');
     switch (opsi) {
         case 1: Mahasiswa.cariMahasiswa(identitas, (rows) => rows ? cetakData(rows, callback) : callback());
             break;
@@ -61,7 +61,7 @@ function cari(opsi, identitas, callback) {
 }
 
 function tambah(opsi, arrayData, callback) {
-    console.log('masuk tambah');
+    // console.log('masuk tambah');
     switch (opsi) {
         case 1: Mahasiswa.tambahMahasiswa(arrayData, callback);
             break;
@@ -71,7 +71,7 @@ function tambah(opsi, arrayData, callback) {
             break;
         case 4: Matakuliah.tambahMatakuliah(arrayData, callback);
             break;
-        case 5: Kontrak.tambahKontrak(arrayData, daftar(5, callback));
+        case 5: Kontrak.tambahKontrak(arrayData, (rows) => cetakTabel(rows, callback));
             break;
         default: callback();
     }
@@ -79,7 +79,7 @@ function tambah(opsi, arrayData, callback) {
 
 
 function hapus(opsi, identitas, callback) {
-    console.log('masuk hapus');
+    // console.log('masuk hapus');
     switch (opsi) {
         case 1: Mahasiswa.hapusMahasiswa(identitas, callback);
             break;
@@ -96,13 +96,13 @@ function hapus(opsi, identitas, callback) {
 }
 
 function update(id, nilai, callback) {
-    console.log('masuk update');
+    // console.log('masuk update');
     Kontrak.updateNilai(id, nilai, callback);
 }
 
 
 function validasi(answer, tipe, callback) {
-    console.log('masuk validasi');
+    // console.log('masuk validasi');
     switch (tipe) {
         case 'nim':
             if (answer.length != 10) {
