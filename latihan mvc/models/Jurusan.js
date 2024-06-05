@@ -1,59 +1,51 @@
-import { db } from './connect.js';
-import universityController from `../controllers/universityController.js`;
-const { cetak, ubahOpsi, daftar } = universityController;
+const { db } = require('./connect.js');
 
 class Jurusan {
-    static daftarJurusan(callback = () => { }) {
-        let sql = 'SELECT kode_jurusan,nama_jurusan FROM jurusan';
+    static daftarJurusan(callback) {
+        let sql = 'SELECT * FROM jurusan';
         db.all(sql, (err, rows) => {
-            if (err) console.log(`gagal cetak daftar mahasiswa`)
-            else cetak(rows, callback)
+            if (err) console.log(`Gagal cetak daftar mahasiswa\n`)
+            else callback(rows);
         })
     }
 
-    static cariJurusan(identitas, callback = () => { }) {
-        let opsi = 2;
-        let sql = `SELECT * FROM ${ubahOpsi(opsi, 'nt')} WHERE ${ubahOpsi(opsi, 'pk')} = '${identitas}'`
+    static cariJurusan(identitas, callback) {
+        let sql = `SELECT * FROM jurusan WHERE kode_jurusan = '${identitas}'`
         db.all(sql, (err, rows) => {
-            // console.log(rows);
-            if (err) console.log('gagal cari data')
+            if (err) console.log('Gagal cari data jurusan\n')
             else if (rows.length == 0) {
-                console.log(`${ubahOpsi(opsi, 'NT')} dengan ${ubahOpsi(opsi, 'kolom')} ${identitas}, tidak terdaftar`)
+                console.log(`Jurusan dengan kode jurusan ${identitas} tidak terdaftar\n`);
+                callback();
             } else {
-                daftar(rows, callback)
+                console.log(`Detail jurusan dengan kode jurusan ${identitas} :`);
+                callback(rows);
             }
-            console.log();
-            console.log(garis);
-            callback();
+            // console.log(garis);
         })
     }
 
-    static tambahJurusan(arrayData = [], callback = () => { }) {
-        let opsi = 2;
-        let sql = `INSERT INTO ${ubahOpsi(opsi, 'nt')} VALUES ('${arrayData.join(`','`)}')`;
+    static tambahJurusan(arrayData = [], callback) {
+        let sql = `INSERT INTO jurusan VALUES ('${arrayData.join(`','`)}')`;
         db.run(sql, (err) => {
             if (err) {
-                console.log('gagal tambah data');
+                console.log('Gagal tambah data jurusan\n');
                 callback()
-            } else if (opsi != 5) {
-                console.log(`${ubahOpsi(opsi, 'NT')} telah ditambahkan ke database`);
-                console.log(garis);
+            } else {
+                console.log(`Jurusan telah ditambahkan ke database\n`);
                 callback();
             }
         })
     }
 
-    static hapusJurusan(identitas, callback = () => { }) {
-        let opsi = 2;
-        let sql = `DELETE FROM ${ubahOpsi(opsi, 'nt')} WHERE ${ubahOpsi(opsi, 'pk')} = '${identitas}'`;
+    static hapusJurusan(identitas, callback) {
+        let sql = `DELETE FROM jurusan WHERE kode_jurusan = '${identitas}'`;
         db.run(sql, err => {
-            if (err) console.log('gagal hapus data')
-            else console.log(`Data ${ubahOpsi(opsi, 'NT')} ${identitas}, telah dihapus`)
-            console.log();
-            console.log(garis);
+            if (err) console.log('Gagal hapus data jurusan\n')
+            else console.log(`Data jurusan dengan kode jurusan ${identitas}, telah dihapus\n`);
+            // console.log(garis);
             callback();
         })
     }
 }
 
-export default Jurusan;
+module.exports = Jurusan;

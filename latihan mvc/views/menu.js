@@ -1,33 +1,31 @@
-import Users from '../models/Users.js';
-import { stdin, stdout, exit } from 'node:process';
-import { createInterface } from 'node:readline';
-import universityController from `../controllers/universityController`;
-const { validasi, daftar } = universityController;
+const Users = require('../models/Users.js');
+const { stdin, stdout, exit } = require('node:process');
+const { createInterface } = require('node:readline');
+const { validasi, daftar, ubahOpsi, cari, update, hapus, tambah } = require('../controllers/universityController.js');
 const rl = createInterface(
     stdin, stdout
 );
+let garis = '';
+while (garis.length < stdout.columns) garis += '=';
 
-function login(username = null) {
+function login(username) {
     switch (arguments.length) {
         case 0:
-            rl.question('username   : ', answer => Users.cek(answer, (err, exist = false) => {
-                if (err) console.log('gagal cek data username')
-                else if (!exist) {
+            rl.question('username   : ', answer => Users.cekUser(answer, (exist) => {
+                if (!exist) {
                     console.log('username tidak terdaftar');
                     login();
-                } else {
-                    login(username);
-                }
+                } else login(answer);
             }))
             break;
         case 1:
-            rl.question('password   : ', answer => Users.cek(answer, username, (err, valid = false, peran = null) => {
-                if (err) console.log('gagal cek data password')
-                else if (!valid) {
+            rl.question('password   : ', answer => Users.cekPass(answer, username, (valid, peran = '') => {
+                if (!valid) {
                     console.log('password salah');
                     login(username);
                 } else {
-                    console.log(`welcome, ${username}. Your access level is : ${peran}`);
+                    console.log(garis);
+                    console.log(`Welcome, ${username}. Your access level is : ${peran}`);
                     menu();
                 }
             }))
@@ -35,20 +33,21 @@ function login(username = null) {
     }
 }
 
-function menu(opsi1 = null, opsi2 = null) {
+function menu(opsi1 = null, opsi2) {
     switch (arguments.length) {
         case 0:
-            console.log(`silahkan pilih opsi di bawah ini :`);
-            console.log(`[1] Mahasiswa\n[2] Jurusan\n[3] Dosen\n[4] Matakuliah\n[5] Kontrak\n[6] Keluar`)
             console.log(garis);
+            console.log(`Silahkan pilih opsi di bawah ini :`);
+            console.log(`[1] Mahasiswa\n[2] Jurusan\n[3] Dosen\n[4] Matakuliah\n[5] Kontrak\n[6] Keluar`);
             rl.question(`Masukkan salah satu nomor dari opsi di atas : `, answer => {
                 validasi(answer, 'opsi', (valid) => valid ? menu(parseInt(answer)) : menu())
             });
             break;
         case 1:
-            console.log(`silahkan pilih opsi di bawah ini :`);
-            if (opsi1 == 6) exit(0);
-            else if (opsi1 != 5) {
+            if (opsi1 == '6') exit(0);
+            console.log(garis);
+            console.log(`Silahkan pilih opsi di bawah ini :`);
+            if (opsi1 != '5') {
                 console.log(`[1] Daftar ${ubahOpsi(opsi1, 'NT')}\n[2] Cari ${ubahOpsi(opsi1, 'NT')}\n[3] Tambah ${ubahOpsi(opsi1, 'NT')}\n[4] Hapus ${ubahOpsi(opsi1, 'NT')}\n[5] Kembali`)
             } else {
                 console.log(`[1] Daftar ${ubahOpsi(opsi1, 'NT')}\n[2] Cari ${ubahOpsi(opsi1, 'NT')}\n[3] Tambah ${ubahOpsi(opsi1, 'NT')}\n[4] Hapus ${ubahOpsi(opsi1, 'NT')}\n[5] Update Nilai\n[6] Kembali`)
@@ -61,7 +60,7 @@ function menu(opsi1 = null, opsi2 = null) {
             });
             break
         case 2:
-            switch (opsi2) {
+            switch (opsi1) {
                 case 1: mahasiswa(opsi2)
                     break;
                 case 2: jurusan(opsi2)
@@ -79,36 +78,41 @@ function menu(opsi1 = null, opsi2 = null) {
     }
 }
 
-function mahasiswa(opsi2, arrayData = []) {
-    let jawaban = arrayData;
+function mahasiswa(opsi2 = '', arrayData) {
+    let jawaban = arrayData || [];
     switch (opsi2) {
         case '1':
-            console.log();
-            daftar(1, () => menu(1))
+            console.log(garis);
+            daftar(1, () => menu(1));
             break;
         case '2':
+            console.log(garis);
             rl.question(`Masukkan NIM mahasiswa: `, answer => {
                 validasi(answer, 'nim', (valid) => {
                     if (valid) { cari(1, answer, () => menu(1)) }
-                    else mahasiswa(opsi2);
+                    else mahasiswa('2');
                 });
             });
             break;
         case '3':
+            console.log(garis);
             console.log(`Lengkapi data di bawah ini :`)
             daftar(1, () => {
-                rl.question('NIM\t: ', answer => {
-                    validasi(answer, 'nim', (valid) => {
-                        if (valid) {
-                            jawaban.push(answer.trim());
-                            rl.question('Nama\t: ', answer => {
-                                jawaban.push(answer.trim());
-                                mahasiswa('31', jawaban)
-                            })
-                        } else mahasiswa(opsi2);
-                    })
-                })
+                mahasiswa('30');
             });
+            break;
+        case '30':
+            rl.question('NIM\t: ', answer => {
+                validasi(answer, 'nim', (valid) => {
+                    if (valid) {
+                        jawaban.push(answer.trim());
+                        rl.question('Nama\t: ', answer => {
+                            jawaban.push(answer.trim());
+                            mahasiswa('31', jawaban)
+                        })
+                    } else mahasiswa('30');
+                })
+            })
             break;
         case '31':
             rl.question('Tanggal Lahir\t: ', answer => {
@@ -130,15 +134,17 @@ function mahasiswa(opsi2, arrayData = []) {
                 validasi(answer, 'kode_jurusan', (valid) => {
                     if (valid) {
                         jawaban.push(answer.trim());
+                        console.lo
                         tambah(1, jawaban, () => daftar(1, () => menu(1)));
-                    } else mahasiswa(32);
+                    } else mahasiswa('32', jawaban);
                 })
             })
             break;
         case '4':
+            console.log(garis);
             rl.question(`Masukkan NIM mahasiswa : `, answer => {
                 validasi(answer, 'nim', (valid) => {
-                    if (valid) hapusData(1, answer, () => menu(1))
+                    if (valid) hapus(1, answer, () => menu(1))
                     else mahasiswa(opsi2);
                 })
             });
@@ -149,24 +155,26 @@ function mahasiswa(opsi2, arrayData = []) {
     }
 }
 
-function jurusan(opsi2, arrayData = []) {
-    let jawaban = arrayData;
+function jurusan(opsi2 = '', arrayData) {
+    let jawaban = arrayData || [];
     switch (opsi2) {
         case '1':
-            console.log();
+            console.log(garis);
             daftar(2, () => menu(2));
             break;
         case '2':
+            console.log(garis);
             rl.question(`Masukkan Kode Jurusan : `, answer => {
                 validasi(answer, 'kode_jurusan', (valid) => {
                     if (valid) cari(2, answer, () => menu(2))
-                    else jurusan(2);
+                    else jurusan('2');
                 })
             });
             break;
         case '3':
+            console.log(garis);
             console.log(`Lengkapi data di bawah ini :`)
-            daftarData(2, () => {
+            daftar(2, () => {
                 jurusan('31')
             });
             break;
@@ -184,10 +192,11 @@ function jurusan(opsi2, arrayData = []) {
             })
             break;
         case '4':
+            console.log(garis);
             rl.question(`Masukkan Kode Jurusan : `, answer => {
                 validasi(answer, 'kode_jurusan', (valid) => {
                     if (valid) hapus(2, answer, () => menu(2))
-                    else jurusan(4);
+                    else jurusan('4');
                 }
                 )
             });
@@ -198,14 +207,15 @@ function jurusan(opsi2, arrayData = []) {
     }
 }
 
-function dosen(opsi2, arrayData = []) {
-    let jawaban = arrayData;
+function dosen(opsi2 = '', arrayData) {
+    let jawaban = arrayData || [];
     switch (opsi2) {
         case '1':
-            console.log();
+            console.log(garis);
             daftar(3, () => menu(3));
             break;
         case '2':
+            console.log(garis);
             rl.question(`Masukkan NIP : `, answer => {
                 validasi(answer, 'nip', (valid) => {
                     if (valid) cari(3, answer, () => menu(3))
@@ -214,6 +224,7 @@ function dosen(opsi2, arrayData = []) {
             });
             break;
         case '3':
+            console.log(garis);
             console.log(`Lengkapi data di bawah ini :`)
             daftar(3, () => {
                 dosen('31');
@@ -233,6 +244,7 @@ function dosen(opsi2, arrayData = []) {
             })
             break;
         case '4':
+            console.log(garis);
             rl.question(`Masukkan NIP : `, answer => {
                 validasi(answer, 'nip', (valid) => {
                     if (valid) hapus(3, answer, () => menu(3))
@@ -246,14 +258,15 @@ function dosen(opsi2, arrayData = []) {
     }
 }
 
-function matkul(opsi2, arrayData = []) {
-    let jawaban = arrayData;
+function matkul(opsi2 = '', arrayData) {
+    let jawaban = arrayData || [];
     switch (opsi2) {
         case '1':
-            console.log();
+            console.log(garis);
             daftar(4, () => menu(4));
             break;
         case '2':
+            console.log(garis);
             rl.question(`Masukkan Kode Matakuliah: `, answer => {
                 validasi(answer, 'kode_matkul', (valid) => {
                     if (valid) cari(4, answer, () => menu(4))
@@ -262,6 +275,7 @@ function matkul(opsi2, arrayData = []) {
             });
             break;
         case '3':
+            console.log(garis);
             console.log(`Lengkapi data di bawah ini :`)
             daftar(4, () => {
                 matkul('31');
@@ -291,6 +305,7 @@ function matkul(opsi2, arrayData = []) {
             })
             break;
         case '4':
+            console.log(garis);
             rl.question(`Masukkan Kode Matakuliah : `, answer => {
                 validasi(answer, 'kode_matkul', (valid) => {
                     if (valid) hapus(4, answer, () => menu(4))
@@ -305,15 +320,15 @@ function matkul(opsi2, arrayData = []) {
 }
 
 
-function kontrak(opsi2, arrayData = []) {
-    let lanjut = false;
-    let jawaban = arrayData;
+function kontrak(opsi2 = '', arrayData) {
+    let jawaban = arrayData || [];
     switch (opsi2) {
         case '1':
-            console.log();
+            console.log(garis);
             daftar(5, () => menu(5));
             break;
         case '2':
+            console.log(garis);
             daftar(1, () => {
                 kontrak('21');
             })
@@ -327,8 +342,9 @@ function kontrak(opsi2, arrayData = []) {
             })
             break;
         case '3':
+            console.log(garis);
             console.log(`Lengkapi data di bawah ini :`)
-            daftarData(1, () => {
+            daftar(1, () => {
                 kontrak('31');
             });
             break;
@@ -337,7 +353,7 @@ function kontrak(opsi2, arrayData = []) {
                 validasi(answer, 'nim', (valid) => {
                     if (valid) {
                         jawaban.push(answer.trim());
-                        daftarData(4, () => {
+                        daftar(4, () => {
                             kontrak('32', jawaban);
                         })
                     } else kontrak('31');
@@ -345,11 +361,11 @@ function kontrak(opsi2, arrayData = []) {
             })
             break;
         case '32':
-            rl.question('Masukkan Kode Matakuliah\t: ', answer => {
+            rl.question('Masukkan Kode Matakuliah: ', answer => {
                 validasi(answer, 'kode_matkul', (valid) => {
                     if (valid) {
                         jawaban.push(answer.trim());
-                        daftarData(3, () => {
+                        daftar(3, () => {
                             kontrak('33', jawaban);
                         })
                     } else kontrak('32', jawaban);
@@ -361,47 +377,46 @@ function kontrak(opsi2, arrayData = []) {
                 validasi(answer, 'nip', (valid) => {
                     if (valid) {
                         jawaban.push(answer.trim());
-                        tambahData(5, jawaban, () => menu(5));
+                        tambah(5, jawaban, () => menu(5));
                     } else kontrak('33', jawaban);
                 })
             })
             break;
         case '4':
+            console.log(garis);
             rl.question(`Masukkan ID kontrak : `, answer => hapus(5, answer, () => menu(5)));
             break;
         case '5':
+            console.log(garis);
             daftar(5, () => {
-                while (!lanjut) {
-                    rl.question(`Masukkan NIM mahasiswa :`, answer => {
-                        validasi(answer, 'nim', (valid) => {
-                            lanjut = valid;
-                            if (valid) {
-                                console.log(`Detail mahasiswa dengan NIM '${answer}' :`)
-                                daftar(6, answer, () => {
-                                    rl.question(`Masukkan id yang akan diubah nilainya :`, id => {
-                                        lanjut = false;
-                                        while (!lanjut) {
-                                            rl.question(`tulis nilai yang baru :`, nilai => {
-                                                validasi(nilai, 'nilai', (valid) => {
-                                                    lanjut = valid;
-                                                    if (valid) {
-                                                        update(id, nilai, (err) => {
-                                                            if (err) console.log('gagal update nilai')
-                                                            else {
-                                                                console.log(`nilai telah diupdate`);
-                                                                daftar(5, () => menu(5));
-                                                            }
-                                                        })
-                                                    }
-                                                })
-                                            })
-                                        }
-                                    })
-                                })
-                            }
+                kontrak('51');
+            })
+            break;
+        case ('51'):
+            rl.question(`Masukkan NIM mahasiswa :`, answer => {
+                validasi(answer, 'nim', (valid) => {
+                    if (valid) {
+                        jawaban.push(answer);
+                        console.log(`Detail mahasiswa dengan NIM '${answer}' :`)
+                        daftar(6, answer, () => {
+                            kontrak('52', jawaban);
                         })
-                    })
-                }
+                    } else kontrak('51');
+                })
+            })
+            break;
+        case '52':
+            rl.question(`Masukkan id yang akan diubah nilainya :`, id => {
+                jawaban.push(id);
+                kontrak('53', jawaban);
+            })
+            break;
+        case '53':
+            rl.question(`tulis nilai yang baru :`, nilai => {
+                validasi(nilai, 'nilai', (valid) => {
+                    if (valid) update(jawaban[1], nilai, daftar(5, () => menu(5)))
+                    else kontrak('53', jawaban);
+                })
             })
             break;
         default:
@@ -410,4 +425,5 @@ function kontrak(opsi2, arrayData = []) {
     }
 }
 
-export default { login };
+
+module.exports = { login };

@@ -1,4 +1,5 @@
-import menu from './views/menu.js';
+const menu = require('./views/menu.js');
+const { stdout } = require('node:process');
 const { login } = menu;
 
 let garis = '';

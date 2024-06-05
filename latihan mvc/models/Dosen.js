@@ -1,60 +1,53 @@
-import data from './connect.js';
-const { db } = data;
-import universityController from `../controllers/universityController.js`;
-const { cetak, ubahOpsi, daftar } = universityController;
+const { db } = require('./connect.js');
+
 
 class Dosen {
     static daftarDosen(callback = () => { }) {
         let sql = 'SELECT nip,nama_dosen FROM dosen';
         db.all(sql, (err, rows) => {
-            if (err) console.log(`gagal cetak daftar mahasiswa`)
-            else cetak(rows, callback)
+            if (err) console.log(`Gagal cetak daftar dosen\n`)
+            else callback(rows)
         })
     }
 
-    static cariDosen(identitas, callback = () => { }) {
-        let opsi = 3;
-        let sql = `SELECT * FROM ${ubahOpsi(opsi, 'nt')} WHERE ${ubahOpsi(opsi, 'pk')} = '${identitas}'`
+    static cariDosen(identitas, callback) {
+        let sql = `SELECT * FROM dosen WHERE nip = '${identitas}'`
         db.all(sql, (err, rows) => {
-            // console.log(rows);
-            if (err) console.log('gagal cari data')
+            if (err) console.log('gagal cari data dosen\n')
             else if (rows.length == 0) {
-                console.log(`${ubahOpsi(opsi, 'NT')} dengan ${ubahOpsi(opsi, 'kolom')} ${identitas}, tidak terdaftar`)
+                console.log(`Dosen dengan NIP ${identitas} tidak terdaftar\n`);
+                callback();
             } else {
-                daftar(rows, callback)
+                console.log(`Detail dosen dengan NIP ${identitas} :`);
+                callback(rows);
             }
-            console.log();
-            console.log(garis);
-            callback();
+            // console.log(garis);
         })
     }
 
-    static tambahDosen(arrayData = [], callback = () => { }) {
-        let opsi = 3;
-        let sql = `INSERT INTO ${ubahOpsi(opsi, 'nt')} VALUES ('${arrayData.join(`','`)}')`;
+    static tambahDosen(arrayData = [], callback) {
+        let sql = `INSERT INTO dosen VALUES ('${arrayData.join(`','`)}')`;
         db.run(sql, (err) => {
             if (err) {
-                console.log('gagal tambah data');
+                console.log('Gagal tambah data dosen\n');
                 callback()
-            } else if (opsi != 5) {
-                console.log(`${ubahOpsi(opsi, 'NT')} telah ditambahkan ke database`);
-                console.log(garis);
+            } else {
+                console.log(`Dosen telah ditambahkan ke database\n`);
+                // console.log(garis);
                 callback();
             }
         })
     }
 
     static hapusDosen(identitas, callback = () => { }) {
-        let opsi = 3;
-        let sql = `DELETE FROM ${ubahOpsi(opsi, 'nt')} WHERE ${ubahOpsi(opsi, 'pk')} = '${identitas}'`;
+        let sql = `DELETE FROM dosen WHERE nip = '${identitas}'`;
         db.run(sql, err => {
-            if (err) console.log('gagal hapus data')
-            else console.log(`Data ${ubahOpsi(opsi, 'NT')} ${identitas}, telah dihapus`)
-            console.log();
-            console.log(garis);
+            if (err) console.log('Gagal hapus data dosen\n')
+            else console.log(`Data dosen dengan NIP ${identitas} telah dihapus\n`);
+            // console.log(garis);
             callback();
         })
     }
 }
 
-export default Dosen;
+module.exports = Dosen;

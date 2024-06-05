@@ -1,24 +1,23 @@
-import data from './connect.js';
-const { db } = data;
+const { db } = require('./connect.js');
 
 class Users {
-    cek(answer, username = '', callback) {
-        if (typeof arguments[1] === 'function') {
-            let sql = `SELECT * FROM users WHERE username = '${answer}'`;
-            db.all(sql, (err, rows) => {
-                if (err) callback(err)
-                else if (rows.length == 0) callback(err, false)
-                else callback(err, true);
-            })
-        } else {
-            let sql = `SELECT pass FROM users WHERE username = '${username}'`;
-            db.all(sql, (err, rows) => {
-                if (err) callback(err)
-                else if (rows.length == 0) callback(err, false)
-                else callback(err, true, rows[0].peran);
-            })
-        }
+    static cekUser(answer, callback = () => { }) {
+        let sql = `SELECT * FROM users WHERE username = '${answer}'`;
+        db.all(sql, (err, rows) => {
+            if (err) console.log('gagal cek data username')
+            if (rows.length == 0) callback(false)
+            else callback(true);
+        })
+    }
+
+    static cekPass(answer, username, callback = () => { }) {
+        let sql = `SELECT * FROM users WHERE username = '${username}' AND pass = '${answer}'`;
+        db.all(sql, (err, rows) => {
+            if (err) console.log('gagal cek data password')
+            else if (rows.length == 0) callback(false)
+            else if (answer == rows[0].pass) callback(true, rows[0].peran);
+        })
     }
 }
 
-export default Users;
+module.exports = Users;

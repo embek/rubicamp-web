@@ -1,6 +1,19 @@
-import Table from "cli-table";
+const Table = require('cli-table');
+const Mahasiswa = require('./../models/Mahasiswa.js');
+const Jurusan = require('./../models/Jurusan.js');
+const Dosen = require('./../models/Dosen.js');
+const Matakuliah = require('./../models/Matakuliah.js');
+const Kontrak = require('./../models/Kontrak.js');
 
-function cetak(rows, callback = () => { }) {
+function cetakData(rows, callback) {
+    console.log('masuk cetak data');
+    Object.keys(rows[0]).forEach(key => console.log(`${ubahKolom(key)} : ${rows[0][key]}`));
+    console.log();
+    callback();
+}
+
+function cetakTabel(rows, callback = () => { }) {
+    console.log('masuk cetak tabel');
     var judul = [];
     Object.keys(rows[0]).forEach(nama_kolom => judul.push(ubahKolom(nama_kolom)));
     var table = new Table({
@@ -9,11 +22,87 @@ function cetak(rows, callback = () => { }) {
     rows.forEach(baris => table.push(Object.values(baris).map(nilai => nilai != null ? nilai : '')))
     console.log(table.toString());
     console.log();
-    console.log(garis);
     callback();
 }
 
-function validasi(answer, tipe, callback = () => { }) {
+function daftar(opsi, nim = '', callback) {
+    console.log('masuk daftar');
+    if (typeof arguments[1] === 'function') {
+        switch (opsi) {
+            case 1: Mahasiswa.daftarMahasiswa((rows) => cetakTabel(rows, arguments[1]));
+                break;
+            case 2: Jurusan.daftarJurusan((rows) => cetakTabel(rows, arguments[1]));
+                break;
+            case 3: Dosen.daftarDosen((rows) => cetakTabel(rows, arguments[1]));
+                break;
+            case 4: Matakuliah.daftarMatakuliah((rows) => cetakTabel(rows, arguments[1]));
+                break;
+            case 5: Kontrak.daftarKontrak((rows) => cetakTabel(rows, arguments[1]));
+                break;
+        }
+    } else Kontrak.daftarKontrakNim(nim, (rows) => cetakTabel(rows, arguments[2]));
+}
+
+function cari(opsi, identitas, callback) {
+    console.log('masuk cari');
+    switch (opsi) {
+        case 1: Mahasiswa.cariMahasiswa(identitas, (rows) => rows ? cetakData(rows, callback) : callback());
+            break;
+        case 2: Jurusan.cariJurusan(identitas, (rows) => rows ? cetakData(rows, callback) : callback());
+            break;
+        case 3: Dosen.cariDosen(identitas, (rows) => rows ? cetakData(rows, callback) : callback());
+            break;
+        case 4: Matakuliah.cariMatakuliah(identitas, (rows) => rows ? cetakData(rows, callback) : callback());
+            break;
+        case 5: Kontrak.cariKontrak(identitas, (rows) => rows ? cetakTabel(rows, callback) : callback());
+            break;
+        default: callback();
+    }
+}
+
+function tambah(opsi, arrayData, callback) {
+    console.log('masuk tambah');
+    switch (opsi) {
+        case 1: Mahasiswa.tambahMahasiswa(arrayData, callback);
+            break;
+        case 2: Jurusan.tambahJurusan(arrayData, callback);
+            break;
+        case 3: Dosen.tambahDosen(arrayData, callback);
+            break;
+        case 4: Matakuliah.tambahMatakuliah(arrayData, callback);
+            break;
+        case 5: Kontrak.tambahKontrak(arrayData, daftar(5, callback));
+            break;
+        default: callback();
+    }
+}
+
+
+function hapus(opsi, identitas, callback) {
+    console.log('masuk hapus');
+    switch (opsi) {
+        case 1: Mahasiswa.hapusMahasiswa(identitas, callback);
+            break;
+        case 2: Jurusan.hapusJurusan(identitas, callback);
+            break;
+        case 3: Dosen.hapusDosen(identitas, callback);
+            break;
+        case 4: Matakuliah.hapusMatakuliah(identitas, callback);
+            break;
+        case 5: Kontrak.hapusKontrak(identitas, callback);
+            break;
+        default: callback();
+    }
+}
+
+function update(id, nilai, callback) {
+    console.log('masuk update');
+    Kontrak.updateNilai(id, nilai, callback);
+}
+
+
+function validasi(answer, tipe, callback) {
+    console.log('masuk validasi');
     switch (tipe) {
         case 'nim':
             if (answer.length != 10) {
@@ -120,71 +209,4 @@ function ubahOpsi(opsi, tipe) {
     }
 }
 
-function daftar(opsi, nim = '', callback = () => { }) {
-    switch (opsi) {
-        case 1: Mahasiswa.daftarMahasiswa((rows) => cetak(rows, callback));
-            break;
-        case 2: Jurusan.daftarJurusan((rows) => cetak(rows, callback));
-            break;
-        case 3: Dosen.daftarDosen((rows) => cetak(rows, callback));
-            break;
-        case 4: Matkul.daftarMatkul((rows) => cetak(rows, callback));
-            break;
-        case 5: Kontrak.daftarKontrak((rows) => cetak(rows, callback));
-            break;
-        case 6: Kontrak.daftarKontrakNim(nim, (rows) => cetak(rows, callback));
-            break;
-    }
-}
-
-function cari(opsi, identitas, callback = () => { }) {
-    switch (opsi) {
-        case 1:
-            break;
-        case 2: Jurusan.cariJurusan(identitas, callback);
-            break;
-        case 3: Dosen.cariDosen(identitas, callback);
-            break;
-        case 4: Matkul.cariMatkul(identitas, callback);
-            break;
-        case 5: Kontrak.cariKontrak(identitas, callback);
-            break;
-    }
-}
-
-function tambah(opsi, arrayData = [], callback = () => { }) {
-    switch (opsi) {
-        case 1: Mahasiswa.cariMahasiswa(identitas, callback);
-            break;
-        case 2: Jurusan.cariJurusan(identitas, callback);
-            break;
-        case 3: Dosen.cariDosen(identitas, callback);
-            break;
-        case 4: Matkul.cariMatkul(identitas, callback);
-            break;
-        case 5: Kontrak.cariKontrak(identitas, callback);
-            break;
-    }
-}
-
-
-function hapus(opsi, identitas, callback = () => { }) {
-    switch (opsi) {
-        case 1: Mahasiswa.hapusMahasiswa(identitas, callback);
-            break;
-        case 2: Jurusan.hapusJurusan(identitas, callback);
-            break;
-        case 3: Dosen.hapusDosen(identitas, callback);
-            break;
-        case 4: Matkul.hapusMatkul(identitas, callback);
-            break;
-        case 5: Kontrak.hapusKontrak(identitas, callback);
-            break;
-    }
-}
-
-function update(id, nilai, callback) {
-    Kontrak.updateNilai(id, nilai, callback);
-}
-
-export { cetak, validasi, ubahOpsi, ubahKolom, daftar, hapus, cari }
+module.exports = { cetakTabel, validasi, ubahOpsi, ubahKolom, daftar, hapus, cari, update, tambah }
