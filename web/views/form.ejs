@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adding Data</title>
+    <!-- <style>
+        input,
+        select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #cancel {
+            width: 100%;
+            background-color: #390dea;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type=submit] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style> -->
+</head>
+
+<body>
+    <% console.log(id) %>
+        <form action="/<%= id==-1? `add` : `edit/${id}` %> " method="post">
+            <input type="text" id="name" name="name" placeholder="insert your name" required
+                value=<%=id==-1?'':biodata[id].name %>><br>
+            <input type="number" min="0" id="height" name="height" placeholder="insert your height"
+                value=<%=id==-1?'':biodata[id].height %>><br>
+            <input type="number" min="0" step="0.01" id="weight" name="weight" placeholder="insert your weight"
+                value=<%=id==-1?'':biodata[id].weight %>><br>
+            <input type="date" id="birthdate" name="birthdate" value=<%=id==-1?'':biodata[id].birthdate %>><br>
+            <select name="married" id="married">
+                <option value="" disabled <%=id!=-1? '' :'selected' %> hidden>Have you married?</option>
+                <option value="true" <%=id==-1? '' : biodata[id].married? 'selected' :'' %> >Yes</option>
+                <option value="false" <%=id==-1? '' :biodata[id].married? '' :'selected' %>>No</option>
+            </select><br>
+            <input id="save" type="submit" value="Save">
+        </form>
+        <form action="/" method="get"><input id="cancel" type="button" onclick="window.location.href='/'"
+                value="Cancel">
+        </form>
+
+</body>
+
+</html>
