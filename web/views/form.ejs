@@ -57,8 +57,8 @@
                 <input type="date" id="birthdate" name="birthdate" value=<%=id==-1?'':biodata[id].birthdate %>><br>
                 <select name="married" id="married">
                     <option value="" disabled <%=id!=-1? '' :'selected' %> hidden>Have you married?</option>
-                    <option value="true" <%=id==-1? '' : biodata[id].married? 'selected' :'' %> >Yes</option>
-                    <option value="false" <%=id==-1? '' :biodata[id].married? '' :'selected' %>>No</option>
+                    <option value="true" <%=id==-1? '' : biodata[id].married? 'selected' :'' %> >True</option>
+                    <option value="false" <%=id==-1? '' :biodata[id].married? '' :'selected' %>>False</option>
                 </select><br>
                 <input id="save" type="submit" value="Save">
             </form>

@@ -22,7 +22,7 @@
             width: 100%;
             border-color: #dfdfe0;
             border-spacing: 0;
-            border-style:solid;
+            border-style: solid;
             margin-top: 10px;
             padding-left: 1%;
             box-sizing: border-box;
@@ -32,7 +32,7 @@
             background-color: #f2f2f2;
         }
 
-        th{
+        th {
             text-align: left;
         }
 
@@ -84,7 +84,7 @@
                     <%= isi.married? 'Yes' : 'Not yet' %>
                 </td>
                 <td><a href="/edit/<%= index %>">Update</a> <a
-                        onclick="return confirm('apakah kamu yakin menghapus data <%= isi.name%>')"
+                        onclick="return confirm(`apakah kamu yakin menghapus data '<%= isi.name%>'`)"
                         href="/delete/<%= index %>">Delete</a></td>
             </tr>
             <% }) %>
