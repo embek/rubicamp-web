@@ -1,72 +1,22 @@
-const express = require('express')
-const { readFileSync, writeFileSync } = require('fs')
+const express = require('express');
+const { createBio, readBio, addBio, editBio, updateBio, deleteBio } = require('./controllers/biodataControllers');
+const bodyParser = require('body-parser');
 const app = express()
 
-const biodata = JSON.parse(readFileSync('biodata.json', 'utf-8'));
-
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    // console.log('masuk load /');
-    res.render('index', { biodata })
-})
+app.get('/', readBio)
 
-app.get('/add', (req, res) => {
-    // console.log('masuk get /add');
-    res.render('form', { biodata: {}, id: -1 })
-})
+app.get('/add', addBio)
 
-app.post('/add', (req, res) => {
-    // console.log('masuk post /');
-    let body = '';
-    req.on('data', (chunk) => body += chunk);
-    req.on('close', () => {
-        let params = new URLSearchParams(body);
-        let name = params.get('name');
-        let height = params.get('height');
-        let weight = params.get('weight');
-        let married = JSON.parse(params.get('married'));
-        let birthdate = params.get('birthdate');
-        biodata.push({ name, height, weight, birthdate, married });
-        writeFileSync('biodata.json', JSON.stringify(biodata))
-        res.redirect('/')
-    })
-})
+app.post('/add', createBio)
 
-app.get('/edit/:id', (req, res) => {
-    let id = Number(req.params.id);
-    // console.log('masuk get /edit', id);
-    // console.log(biodata[id]);
-    res.render('form', { biodata, id });
-})
+app.get('/edit/:id', editBio);
 
-app.post('/edit/:id', (req, res) => {
-    // console.log('masuk post /edit')
-    let id = Number(req.params.id);
-    let body = '';
-    req.on('data', (chunk) => body += chunk);
-    req.on('close', () => {
-        let params = new URLSearchParams(body);
-        let name = params.get('name');
-        let height = params.get('height');
-        let weight = params.get('weight');
-        let married = JSON.parse(params.get('married'));
-        let birthdate = params.get('birthdate');
-        biodata[id] = { name, height, weight, married, birthdate };
-        // console.log(biodata[id]);
-        writeFileSync('biodata.json', JSON.stringify(biodata))
-        res.redirect('/')
-    })
-})
+app.post('/edit/:id', updateBio)
 
-app.get('/delete/:id', (req, res) => {
-    try {
-        // console.log('masuk /delete', req.params.id)
-        let id = Number(req.params.id);
-        biodata.splice(id, 1);
-        writeFileSync('biodata.json', JSON.stringify(biodata))
-        res.redirect('/');
-    } catch (e) { console.log(e) }
-})
+app.get('/delete/:id', deleteBio)
 
-app.listen(3000);
+app.listen(3000, () => console.log('berjalan di port 3000'));
