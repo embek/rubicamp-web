@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD (Create, Read, Update, Delete)</title>
-    <style>
+    <title>BREAD (Browse, Read, Edit, Add, Delete)</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <!-- <style>
         body {
             background-color: #eff8ff;
             box-sizing: border-box;
@@ -45,50 +46,151 @@
             background-color: #390dea;
             box-sizing: border-box;
         }
-    </style>
+    </style> -->
 </head>
 
 <body>
-    <h1>JSON CRUD (Create, Read, Update, Delete)</h1>
-    <button onclick="window.location.href='/add'"> Create</button>
-    <table>
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Height</th>
-                <th>Weight</th>
-                <th>Birth Date</th>
-                <th>Is Married</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <% biodata.forEach((isi, index)=> { %>
-            <tr>
-                <td>
-                    <%= index+1 %>
-                </td>
-                <td>
-                    <%= isi.name %>
-                </td>
-                <td>
-                    <%= isi.height %>
-                </td>
-                <td>
-                    <%= isi.weight %>
-                </td>
-                <td>
-                    <%= isi.birthdate %>
-                </td>
-                <td>
-                    <%= isi.married? 'Yes' : 'Not yet' %>
-                </td>
-                <td><a href="/edit/<%= isi.id %>">Update</a> <a
-                        onclick="return confirm(`apakah kamu yakin menghapus data '<%= isi.name%>'`)"
-                        href="/delete/<%= isi.id %>">Delete</a></td>
-            </tr>
-            <% }) %>
-    </table>
+    <div class="card" style="width: 70%;margin: 1% auto;">
+        <div class="card-header text-center">
+            <h1 class="h2">SQLite BREAD (Browse, Read, Edit, Add, Delete) and Pagination</h1>
+        </div>
+        <div class="card-body">
+
+            <form>
+                <div class="row mb-3">
+                    <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="name">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputHeight" class="col-sm-2 col-form-label">Height</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="height">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputWeight" class="col-sm-2 col-form-label">Weight</label>
+                    <div class="col-sm-10">
+                        <input type="number" step="0.001" class="form-control" id="weight">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputBirthdate" class="col-sm-2 col-form-label">Birthdate</label>
+                    <div class="col-sm-10">
+                        <div class="row g-3">
+                            <div class="col">
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-sm-1 text-center"> s.d.</div>
+                            <div class="col">
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputMarried" class="col-sm-2 col-form-label">is Married</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" name="married" id="married">
+                            <option value="" disabled selected hidden>Have you married?</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputBirthdate" class="col-sm-2 col-form-label">Operation</label>
+                    <div class="col-sm-10">
+                        <div class="col-sm-1 float-start">
+                            <div class="form-check ">
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1"
+                                    value="option1" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    OR
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm1 float">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2"
+                                    value="option2">
+                                <label class="form-check-label" for="gridRadios2">
+                                    AND
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-info">Search</button>
+                <button type="submit" class="btn btn-warning">Reset</button>
+            </form>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Height</th>
+                        <th>Weight</th>
+                        <th>Birth Date</th>
+                        <th>Is Married</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <% biodata.forEach((isi, index)=> { %>
+                    <tr>
+                        <td>
+                            <%= index+1 %>
+                        </td>
+                        <td>
+                            <%= isi.name %>
+                        </td>
+                        <td>
+                            <%= isi.height %>
+                        </td>
+                        <td>
+                            <%= isi.weight %>
+                        </td>
+                        <td>
+                            <%= isi.birthdate %>
+                        </td>
+                        <td>
+                            <%= isi.married? 'Yes' : 'Not yet' %>
+                        </td>
+                        <td><a class="btn btn-success" href="/edit/<%= isi.id %>">Update</a>
+                            <a class="btn btn-danger"
+                                onclick="return confirm(`apakah kamu yakin menghapus data '<%= isi.name%>'`)"
+                                href="/delete/<%= isi.id %>">Delete</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </table>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary float-start" onclick="window.location.href='/add'">Add</button>
+            <nav aria-label="Page navigation example float-end">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item disabled">
+                        <a class="page-link">
+                            Previous </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+
+
+
 </body>
 
 </html>

@@ -3,14 +3,14 @@ const Biodata = require('../models/Biodata');
 function readBio(req, res) {
     console.log('masuk readBio')
     Biodata.read((biodata) => {
-        console.log(biodata);
+        // console.log(biodata);
         res.render('index', { biodata })
     });
 }
 
 function addBio(req, res) {
     console.log('masuk addBio')
-    Biodata.read(() => res.render('form', { biodata: {}, id: -1 }))
+    Biodata.read(() => res.render('form', { biodata: [{}], id: -1 }))
 }
 
 function createBio(req, res) {
