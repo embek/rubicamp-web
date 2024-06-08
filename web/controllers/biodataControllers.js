@@ -18,9 +18,9 @@ function createBio(req, res) {
     let name = req.body.name;
     let height = req.body.height;
     let weight = req.body.weight;
-    let married = JSON.parse(params.get('married')) || null;
+    let married = JSON.parse(params.get('married')) || false;
     let birthdate = req.body.birthdate;
-    Biodata.create({ name, height, weight, birthdate, married }, () => res.redirect('/'));
+    Biodata.create({ name, height, weight, married, birthdate }, () => res.redirect('/'));
 }
 
 function editBio(req, res) {
@@ -46,7 +46,7 @@ function updateBio(req, res) {
 
 function deleteBio(req, res) {
     console.log('masuk deleteBio')
-    let id = Number(req.body.id);
+    let id = Number(req.params.id);
     Biodata.delete(id, () => res.redirect('/'));
 }
 
