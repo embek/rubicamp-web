@@ -51,4 +51,9 @@ function deleteBio(req, res) {
     Biodata.delete(id, () => res.redirect('/'));
 }
 
-module.exports = { readBio, createBio, addBio, editBio, updateBio, deleteBio }
+function searchBio(req, res) {
+    console.log('masuk search')
+    console.log(req.body)
+}
+
+module.exports = { readBio, createBio, addBio, editBio, updateBio, deleteBio, searchBio }
