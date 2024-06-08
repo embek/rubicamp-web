@@ -6,19 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adding Data</title>
     <style>
-        
-
         div {
             width: 98.5%;
             margin: auto;
             box-sizing: border-box;
         }
 
-        body{
+        body {
             background-color: #eff8ff;
         }
 
-        input,select {
+        input,
+        select {
             width: 100%;
             box-sizing: border-box;
             margin-top: 1em;
@@ -39,26 +38,24 @@
             border-radius: 5px;
             border-style: none;
         }
-
-
     </style>
 </head>
 
 <body>
-    <% //console.log(id) %>
+    <% let arr=biodata.filter((biodata)=>biodata.id==id) %>
         <div>
             <form action="/<%= id==-1? `add` : `edit/${id}` %> " method="post">
                 <input type="text" id="name" name="name" placeholder="insert your name" required
-                    value=<%=id==-1?'':biodata[id].name %>><br>
+                    value=<%=id==-1?'':arr[0].name %>><br>
                 <input type="number" min="0" id="height" name="height" placeholder="insert your height"
-                    value=<%=id==-1?'':biodata[id].height %>><br>
+                    value=<%=id==-1?'':arr[0].height %>><br>
                 <input type="number" min="0" step="0.001" id="weight" name="weight" placeholder="insert your weight"
-                    value=<%=id==-1?'':biodata[id].weight %>><br>
-                <input type="date" id="birthdate" name="birthdate" value=<%=id==-1?'':biodata[id].birthdate %>><br>
+                    value=<%=id==-1?'':arr[0].weight %>><br>
+                <input type="date" id="birthdate" name="birthdate" value=<%=id==-1?'':arr[0].birthdate %>><br>
                 <select name="married" id="married">
                     <option value="" disabled <%=id!=-1? '' :'selected' %> hidden>Have you married?</option>
-                    <option value="true" <%=id==-1? '' : biodata[id].married? 'selected' :'' %> >True</option>
-                    <option value="false" <%=id==-1? '' :biodata[id].married? '' :'selected' %>>False</option>
+                    <option value="true" <%=id==-1? '' : arr[0].married? 'selected' :'' %> >True</option>
+                    <option value="false" <%=id==-1? '' :arr[0].married? '' :'selected' %>>False</option>
                 </select><br>
                 <input id="save" type="submit" value="Save">
             </form>

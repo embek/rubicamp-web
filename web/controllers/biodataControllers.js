@@ -3,6 +3,7 @@ const Biodata = require('../models/Biodata');
 function readBio(req, res) {
     console.log('masuk readBio')
     Biodata.read((biodata) => {
+        console.log(biodata);
         res.render('index', { biodata })
     });
 }
