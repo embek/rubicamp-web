@@ -1,142 +1,219 @@
 [
     {
-        "name": "Ahmad Setiawan",
-        "height": 175,
-        "weight": 70.2,
-        "birthdate": "1990-05-15",
-        "married": false
-    },
-    {
-        "name": "Budi Santoso",
-        "height": 160,
-        "weight": 55.0,
-        "birthdate": "1985-07-20",
-        "married": true
-    },
-    {
-        "name": "Citra Dewi",
-        "height": 168,
-        "weight": 60.5,
-        "birthdate": "1992-12-01",
-        "married": false
-    },
-    {
-        "name": "Dewi Lestari",
-        "height": 182,
-        "weight": 80.1,
-        "birthdate": "1988-03-11",
-        "married": true
-    },
-    {
-        "name": "Eko Nugroho",
-        "height": 170,
-        "weight": 68.4,
-        "birthdate": "1991-08-21",
-        "married": false
-    },
-    {
-        "name": "Fajar Prasetyo",
-        "height": 165,
-        "weight": 58.7,
-        "birthdate": "1987-06-13",
-        "married": true
-    },
-    {
-        "name": "Gita Sari",
+        "name": "Aditya Pratama",
         "height": 178,
-        "weight": 72.9,
-        "birthdate": "1993-04-09",
+        "weight": 72.5,
+        "birthdate": "1995-01-15",
         "married": false
     },
     {
-        "name": "Hendra Wijaya",
-        "height": 162,
-        "weight": 54.3,
-        "birthdate": "1986-11-30",
+        "name": "Bella Anggraini",
+        "height": 165,
+        "weight": 59.0,
+        "birthdate": "1996-05-10",
         "married": true
     },
     {
-        "name": "Indra Saputra",
-        "height": 180,
-        "weight": 77.5,
-        "birthdate": "1989-01-22",
+        "name": "Cahya Putri",
+        "height": 160,
+        "weight": 55.4,
+        "birthdate": "1997-03-22",
         "married": false
     },
     {
-        "name": "Joko Susanto",
-        "height": 158,
-        "weight": 52.1,
-        "birthdate": "1994-03-17",
+        "name": "Damar Saputra",
+        "height": 182,
+        "weight": 78.3,
+        "birthdate": "1998-07-08",
         "married": true
     },
     {
-        "name": "Kartika Sari",
-        "height": 172,
-        "weight": 69.8,
-        "birthdate": "1991-10-25",
-        "married": false
-    },
-    {
-        "name": "Lia Utami",
+        "name": "Eka Lestari",
         "height": 164,
-        "weight": 57.9,
-        "birthdate": "1988-05-18",
-        "married": true
-    },
-    {
-        "name": "Maya Puspita",
-        "height": 177,
-        "weight": 75.3,
-        "birthdate": "1992-12-14",
+        "weight": 57.1,
+        "birthdate": "1999-11-11",
         "married": false
     },
     {
-        "name": "Nina Suryani",
-        "height": 161,
-        "weight": 56.4,
-        "birthdate": "1987-07-07",
+        "name": "Farhan Hidayat",
+        "height": 180,
+        "weight": 75.6,
+        "birthdate": "2000-08-19",
         "married": true
     },
     {
-        "name": "Oka Nugraha",
-        "height": 174,
-        "weight": 73.1,
-        "birthdate": "1990-09-09",
+        "name": "Gilang Prasetyo",
+        "height": 175,
+        "weight": 70.9,
+        "birthdate": "2001-04-05",
         "married": false
     },
     {
-        "name": "Putri Ayu",
-        "height": 163,
-        "weight": 55.6,
-        "birthdate": "1986-04-27",
+        "name": "Hana Suryani",
+        "height": 162,
+        "weight": 55.9,
+        "birthdate": "2002-02-28",
         "married": true
     },
     {
-        "name": "Rizky Maulana",
+        "name": "Indah Permata",
+        "height": 167,
+        "weight": 60.4,
+        "birthdate": "2003-10-17",
+        "married": false
+    },
+    {
+        "name": "Joko Pratama",
+        "height": 172,
+        "weight": 69.7,
+        "birthdate": "2004-09-12",
+        "married": true
+    },
+    {
+        "name": "Kurniawan Putra",
         "height": 179,
-        "weight": 76.2,
-        "birthdate": "1993-02-10",
+        "weight": 76.5,
+        "birthdate": "2005-11-03",
         "married": false
     },
     {
-        "name": "Sinta Lestari",
+        "name": "Lina Andriani",
+        "height": 160,
+        "weight": 55.8,
+        "birthdate": "2000-05-27",
+        "married": true
+    },
+    {
+        "name": "Mega Pratama",
+        "height": 165,
+        "weight": 58.0,
+        "birthdate": "2001-04-30",
+        "married": false
+    },
+    {
+        "name": "Nina Sari",
+        "height": 163,
+        "weight": 56.2,
+        "birthdate": "2002-07-19",
+        "married": true
+    },
+    {
+        "name": "Oki Nugroho",
+        "height": 170,
+        "weight": 68.9,
+        "birthdate": "2003-12-25",
+        "married": false
+    },
+    {
+        "name": "Putu Santoso",
+        "height": 174,
+        "weight": 72.0,
+        "birthdate": "2004-03-14",
+        "married": true
+    },
+    {
+        "name": "Ratna Ayu",
+        "height": 165,
+        "weight": 59.3,
+        "birthdate": "1995-04-18",
+        "married": false
+    },
+    {
+        "name": "Siti Kurnia",
+        "height": 162,
+        "weight": 55.5,
+        "birthdate": "1996-06-22",
+        "married": true
+    },
+    {
+        "name": "Toni Prasetyo",
+        "height": 178,
+        "weight": 73.4,
+        "birthdate": "1997-11-11",
+        "married": false
+    },
+    {
+        "name": "Umar Hadi",
+        "height": 180,
+        "weight": 76.1,
+        "birthdate": "1998-08-15",
+        "married": true
+    },
+    {
+        "name": "Vina Maulani",
         "height": 166,
-        "weight": 59.7,
-        "birthdate": "1989-06-01",
-        "married": true
-    },
-    {
-        "name": "Taufik Hidayat",
-        "height": 173,
-        "weight": 71.6,
-        "birthdate": "1991-11-03",
+        "weight": 60.2,
+        "birthdate": "1999-02-19",
         "married": false
     },
     {
-        "name": "Umi Salamah",
-        "height": 159,
-        "weight": 53.2,
-        "birthdate": "1985-08-29",
+        "name": "Winda Kusuma",
+        "height": 170,
+        "weight": 65.0,
+        "birthdate": "2000-09-30",
         "married": true
+    },
+    {
+        "name": "Xaverius Suryawan",
+        "height": 179,
+        "weight": 75.8,
+        "birthdate": "2001-05-25",
+        "married": false
+    },
+    {
+        "name": "Yuni Pratami",
+        "height": 168,
+        "weight": 61.7,
+        "birthdate": "2002-01-20",
+        "married": true
+    },
+    {
+        "name": "Zahra Fitriani",
+        "height": 160,
+        "weight": 54.6,
+        "birthdate": "2003-06-18",
+        "married": false
+    },
+    {
+        "name": "Arif Susanto",
+        "height": 176,
+        "weight": 73.5,
+        "birthdate": "2004-12-25",
+        "married": true
+    },
+    {
+        "name": "Beni Wijaya",
+        "height": 182,
+        "weight": 78.9,
+        "birthdate": "2005-08-13",
+        "married": false
+    },
+    {
+        "name": "Cici Lestari",
+        "height": 163,
+        "weight": 56.1,
+        "birthdate": "1995-11-05",
+        "married": true
+    },
+    {
+        "name": "Doni Rahman",
+        "height": 170,
+        "weight": 68.2,
+        "birthdate": "1996-04-11",
+        "married": false
+    },
+    {
+        "name": "Eris Maulana",
+        "height": 175,
+        "weight": 71.0,
+        "birthdate": "1997-07-28",
+        "married": true
+    },
+    {
+        "name": "Fani Putri",
+        "height": 167,
+        "weight": 62.3,
+        "birthdate": "1998-03-09",
+        "married": false
     }
 ]

@@ -59,7 +59,7 @@
                 <div class="row mb-3">
                     <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                     <div class="col-sm-10">
-                        <input required type="text" class="form-control" name="name" id="name"
+                        <input type="text" class="form-control" name="name" id="name"
                             <%=!search?'':search.name?`value=${search.name} `:'' %>>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                                 <label class="form-check-label" for="operationor">OR</label>
                             </div>
                         </div>
-                        <div class="col-sm1 float">
+                        <div style="margin-left: 4em;" class="col-sm1">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="operation" id="operationand"
                                     value="AND" <%=!search?'' :!search.operation?'': search.operation=='AND' ? 'checked'
@@ -130,8 +130,8 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" method="post" class="btn btn-info" style="margin-right: 0.5%;">Search</button>
-                <a class="btn btn-warning" href="/">Reset</a>
+                <button type="submit" method="post" class="btn btn-info" style="margin-right: 0.5%; width: 6em;">Search</button>
+                <a class="btn btn-warning" style="width: 6em;" href="/">Reset</a>
             </form>
 
             <table class="table table-striped">
@@ -167,8 +167,8 @@
                             <%= isi.married? 'Yes' : 'Not yet' %>
                         </td>
                         <td>
-                            <a class="btn btn-success" href="/edit/<%= isi.id %>">Update</a>
-                            <a class="btn btn-danger"
+                            <a class="btn btn-success" style="width: 6em;" href="/edit/<%= isi.id %>">Update</a>
+                            <a class="btn btn-danger" style="width: 6em;"
                                 onclick="return confirm(`apakah kamu yakin menghapus data '<%= isi.name%>'`)"
                                 href="/delete/<%= isi.id %>">Delete</a>
                         </td>
@@ -177,7 +177,7 @@
             </table>
         </div>
         <div class="card-footer">
-            <a class="btn btn-primary float-start" onclick="window.location.href='/add'">Add</a>
+            <a class="btn btn-primary float-start" style="width: 6em;" onclick="window.location.href='/add'">Add</a>
             <nav class="float-end" aria-label="Page navigation example">
                 <ul class="pagination">
                     <%if (page>1){%>
