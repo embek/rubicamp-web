@@ -1,5 +1,5 @@
 const express = require('express');
-const { createBio, readBio, addBio, editBio, updateBio, deleteBio, searchBio } = require('./controllers/biodataControllers');
+const { createBio, readBio, addBio, editBio, updateBio, deleteBio, resetBio } = require('./controllers/biodataControllers');
 const bodyParser = require('body-parser');
 const path = require('node:path');
 const app = express()
@@ -22,8 +22,10 @@ app.post('/edit/:id', updateBio)
 
 app.get('/delete/:id', deleteBio)
 
-app.post('/search', searchBio)
+app.get('/search', readBio)
 
-app.get('/page/:pagenum',  )
+app.get('/reset', resetBio)
+
+app.get('/page/:num',  readBio)
 
 app.listen(3000, () => console.log('berjalan di port 3000'));

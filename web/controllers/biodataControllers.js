@@ -1,16 +1,30 @@
+const { query } = require('express');
 const Biodata = require('../models/Biodata');
+let limit = 5;
 
 function readBio(req, res) {
     console.log('masuk readBio')
-    Biodata.read((biodata) => {
+    let url = req.url;
+    if (url == '/') url = '/?page=1'
+    if (url.search('page') == -1) url += '&page=1';
+    let page = 1;
+    if (req.query.page) page = Number(req.query.page)
+    let search = JSON.parse(JSON.stringify(req.query));
+    let x = Object.keys(search).length - 1;
+    if (search.married != undefined) search.married = JSON.parse(search.married)
+    while (x >= 0) {
+        if (Object.values(search)[x] === '' || Object.keys(search)[x] == 'page') delete search[Object.keys(search)[x]]
+        x--;
+    }
+    Biodata.read(search, limit, page, (biodata, banyak) => {
         // console.log(biodata);
-        res.render('index', { biodata })
+        res.render('index', { biodata, search, page, limit, banyak, url })
     });
 }
 
 function addBio(req, res) {
     console.log('masuk addBio')
-    Biodata.read(() => res.render('form', { biodata: [{}], id: -1 }))
+    Biodata.read({}, limit, 1, () => res.render('form', { biodata: [{}], id: -1 }))
 }
 
 function createBio(req, res) {
@@ -27,7 +41,7 @@ function createBio(req, res) {
 function editBio(req, res) {
     console.log('masuk editBio')
     let id = Number(req.params.id);
-    Biodata.read((biodata) => {
+    Biodata.read({}, -1, 1, (biodata) => {
         // console.log(biodata, id, biodata[id]);
         res.render('form', { biodata, id })
     })
@@ -51,9 +65,12 @@ function deleteBio(req, res) {
     Biodata.delete(id, () => res.redirect('/'));
 }
 
-function searchBio(req, res) {
-    console.log('masuk search')
-    console.log(req.body)
+function resetBio(res, req) {
+    console.log('masuk resetBio')
+    Biodata.read({}, limit, 1, (biodata, banyak) => {
+        // console.log(biodata);
+        res.render('index', { biodata, search: {}, page: 1, limit, banyak, url: '/?page=1' })
+    });
 }
 
-module.exports = { readBio, createBio, addBio, editBio, updateBio, deleteBio, searchBio }
+module.exports = { readBio, createBio, addBio, editBio, updateBio, deleteBio, resetBio }

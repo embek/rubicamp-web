@@ -55,24 +55,26 @@
             <h1 class="h2">SQLite BREAD (Browse, Read, Edit, Add, Delete) and Pagination</h1>
         </div>
         <div class="card-body">
-
-            <form action="/search" method="post">
+            <form action="/search" method="get">
                 <div class="row mb-3">
                     <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name">
+                        <input required type="text" class="form-control" name="name" id="name"
+                            <%=!search?'':search.name?`value=${search.name} `:'' %>>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="inputHeight" class="col-sm-2 col-form-label">Height</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" id="height" name="height">
+                        <input type="number" class="form-control" id="height" name="height"
+                            <%=!search?'':search.height?`value=${search.height} `:'' %> >
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="inputWeight" class="col-sm-2 col-form-label">Weight</label>
                     <div class="col-sm-10">
-                        <input type="number" step="0.001" class="form-control" id="weight" name="weight">
+                        <input type="number" step="0.001" class="form-control" id="weight" name="weight" <%=!search?''
+                            :search.weight?`value=${search.weight} `:'' %> >
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -80,11 +82,13 @@
                     <div class="col-sm-10">
                         <div class="row g-3">
                             <div class="col">
-                                <input type="date" name="date1" id="date1" class="form-control">
+                                <input type="date" name="date1" id="date1" class="form-control" <%=!search?''
+                                    :search.date1?`value=${search.date1} `:'' %>>
                             </div>
                             <div class="col-sm-1 text-center"> s.d.</div>
                             <div class="col">
-                                <input type="date" name="date2" id="date2" class="form-control">
+                                <input type="date" name="date2" id="date2" class="form-control" <%=!search?''
+                                    :search.date2?`value=${search.date2} `:'' %> >
                             </div>
                         </div>
                     </div>
@@ -93,9 +97,15 @@
                     <label for="inputMarried" class="col-sm-2 col-form-label">is Married</label>
                     <div class="col-sm-10">
                         <select class="form-select" name="married" id="married">
-                            <option value="" disabled selected hidden>Have you married?</option>
-                            <option value="true">True</option>
-                            <option value="false">False</option>
+                            <option value="" disabled <%=typeof search.married=='undefined'? 'selected' :''%> hidden> -select
+                                married-
+                            </option>
+                            <option value="true" <%=search.married=='true' ?`selected`:'' %>
+                                <%console.log(typeof search.married)%>>True
+                            </option>
+                            <option value="false" <%=search.married=='false' ?`selected`:'' %>
+                                >False</option>
+
                         </select>
                     </div>
                 </div>
@@ -105,22 +115,19 @@
                         <div class="col-sm-1 float-start">
                             <div class="form-check ">
                                 <input class="form-check-input" type="radio" name="operation" id="operationor"
-                                    value="OR" checked>
-                                <label class="form-check-label" for="gridRadios1">
-                                    OR
-                                </label>
+                                    value="OR" <%=!search?'' :!search.operation?'checked': search.operation=='OR'
+                                    ? 'checked' :'' %>>
+                                <label class="form-check-label" for="operationor">OR</label>
                             </div>
                         </div>
                         <div class="col-sm1 float">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="operation" id="operationand
-                                    value="AND">
-                                <label class="form-check-label" for="gridRadios2">
-                                    AND
-                                </label>
+                                <input class="form-check-input" type="radio" name="operation" id="operationand"
+                                    value="AND" <%=!search?'' :!search.operation?'': search.operation=='AND' ? 'checked'
+                                    :'' %>>
+                                <label class="form-check-label" for="operationand">AND</label>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <button type="submit" method="post" class="btn btn-info" style="margin-right: 0.5%;">Search</button>
@@ -142,7 +149,7 @@
                 <% biodata.forEach((isi, index)=> { %>
                     <tr>
                         <td>
-                            <%= index+1 %>
+                            <%= limit*(page-1)+index+1 %>
                         </td>
                         <td>
                             <%= isi.name %>
@@ -171,27 +178,35 @@
         </div>
         <div class="card-footer">
             <a class="btn btn-primary float-start" onclick="window.location.href='/add'">Add</a>
-            <nav aria-label="Page navigation example float-end">
-                <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link">
-                            Previous </a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
+            <nav class="float-end" aria-label="Page navigation example">
+                <ul class="pagination">
+                    <%if (page>1){%>
+                        <li class="page-item">
+                            <a class="page-link" href="<%= url.replace(`page=${page}`,`page=${page-1}`)%>"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <% }%>
+                            <% for (let i=1;i<=Math.ceil(banyak/limit);i++){%>
+                                <li class="page-item"><a class="page-link <%= page==i? 'active':''%>"
+                                        href="<%= url.replace(`page=${page}`,`page=${i}`)%>">
+                                        <%=i%>
+                                    </a></li>
+                                <%}%>
+                                    <%if (page<Math.ceil(banyak/limit)){%>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="<%= url.replace(`page=${page}`,`page=${page+1}`)%>"
+                                                aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                        <% }%>
                 </ul>
             </nav>
         </div>
     </div>
-
-
-
-
-
 </body>
 
 </html>

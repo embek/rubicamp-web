@@ -1,9 +1,30 @@
 [
     {
+        "name": "Ahmad Setiawan",
+        "height": 175,
+        "weight": 70.2,
+        "birthdate": "1990-05-15",
+        "married": false
+    },
+    {
         "name": "Budi Santoso",
         "height": 160,
-        "weight": 55,
+        "weight": 55.0,
         "birthdate": "1985-07-20",
+        "married": true
+    },
+    {
+        "name": "Citra Dewi",
+        "height": 168,
+        "weight": 60.5,
+        "birthdate": "1992-12-01",
+        "married": false
+    },
+    {
+        "name": "Dewi Lestari",
+        "height": 182,
+        "weight": 80.1,
+        "birthdate": "1988-03-11",
         "married": true
     },
     {
@@ -14,11 +35,11 @@
         "married": false
     },
     {
-        "name": "Fajar",
-        "height": "165",
-        "weight": "58.7",
-        "married": true,
-        "birthdate": "1987-06-13"
+        "name": "Fajar Prasetyo",
+        "height": 165,
+        "weight": 58.7,
+        "birthdate": "1987-06-13",
+        "married": true
     },
     {
         "name": "Gita Sari",
@@ -33,6 +54,13 @@
         "weight": 54.3,
         "birthdate": "1986-11-30",
         "married": true
+    },
+    {
+        "name": "Indra Saputra",
+        "height": 180,
+        "weight": 77.5,
+        "birthdate": "1989-01-22",
+        "married": false
     },
     {
         "name": "Joko Susanto",
@@ -98,17 +126,17 @@
         "married": true
     },
     {
-        "name": "Umi",
-        "height": "159",
-        "weight": "53.197",
-        "married": true,
-        "birthdate": "1985-08-29"
+        "name": "Taufik Hidayat",
+        "height": 173,
+        "weight": 71.6,
+        "birthdate": "1991-11-03",
+        "married": false
     },
     {
-        "name": "qwert",
-        "height": "123",
-        "weight": "12.3",
-        "married": true,
-        "birthdate": "2024-06-04"
+        "name": "Umi Salamah",
+        "height": 159,
+        "weight": 53.2,
+        "birthdate": "1985-08-29",
+        "married": true
     }
 ]
