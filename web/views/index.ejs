@@ -100,10 +100,10 @@
                             <option value="" disabled <%=typeof search.married=='undefined'? 'selected' :''%> hidden> -select
                                 married-
                             </option>
-                            <option value="true" <%=search.married=='true' ?`selected`:'' %>
+                            <option value="true" <%=search.married===true ?`selected`:'' %>
                                 <%console.log(typeof search.married)%>>True
                             </option>
-                            <option value="false" <%=search.married=='false' ?`selected`:'' %>
+                            <option value="false" <%=search.married===false ?`selected`:'' %>
                                 >False</option>
 
                         </select>

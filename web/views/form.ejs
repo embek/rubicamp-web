@@ -48,11 +48,11 @@
             <h1 class="h2">Adding Data</h1>
         </div>
         <div class="card-body">
-            <% let arr=biodata.filter((biodata)=>biodata.id==id) %>
+            <% let arr=biodata.filter((biodata)=>biodata.id==id); console.log(arr[0].name) %>
                 <div style="width: 98%; margin: 1% auto;">
                     <form action="/<%= id==-1? `add` : `edit/${id}` %> " method="post">
                         <input class="form-control" type="text" id="name" name="name" placeholder="insert your name"
-                            required value=<%=id==-1?'':arr[0].name %>><br>
+                            required value=<%=id==-1?'':`${arr[0].name}` %>><br>
                         <input class="form-control" type="number" min="0" id="height" name="height"
                             placeholder="insert your height" value=<%=id==-1?'':arr[0].height %>><br>
                         <input class="form-control" type="number" min="0" step="0.001" id="weight" name="weight"

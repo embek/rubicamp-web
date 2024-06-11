@@ -30,6 +30,7 @@ function addBio(req, res) {
 function createBio(req, res) {
     console.log('masuk createBio')
     let params = new URLSearchParams(req.body);
+    console.log(req.body)
     let name = req.body.name;
     let height = req.body.height;
     let weight = req.body.weight;
@@ -42,7 +43,6 @@ function editBio(req, res) {
     console.log('masuk editBio')
     let id = Number(req.params.id);
     Biodata.read({}, -1, 1, (biodata) => {
-        // console.log(biodata, id, biodata[id]);
         res.render('form', { biodata, id })
     })
 }
