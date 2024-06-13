@@ -7,17 +7,23 @@ class Biodata {
             let offset = (page - 1) * limit;
             let sql = `SELECT * FROM biodata`;
             if (Object.keys(search).length > 1) sql += ` WHERE `
+            let ada = true;
+            if (typeof search.date1 == 'undefined' || typeof search.date2 == 'undefined') ada = false;
             for (let x in Object.keys(search)) {
                 if (x != 0 && x != Object.keys(search).length - 1) {
-                    sql += ` ${search.operation} `
+                    if (ada && Object.keys(search)[x] == 'date2') sql += ` AND `
+                    else sql += ` ${search.operation} `;
                 }
+                if (ada && Object.keys(search)[x] == 'date1') sql += '(';
                 if (Object.keys(search)[x] == 'name') sql += ` name like '%${search.name}%' `;
                 if (Object.keys(search)[x] == 'height') sql += ` height = ${search.height} `;
                 if (Object.keys(search)[x] == 'weight') sql += ` weight = ${search.weight} `;
                 if (Object.keys(search)[x] == 'date1') sql += ` birthdate >= '${search.date1}' `;
                 if (Object.keys(search)[x] == 'date2') sql += ` birthdate <= '${search.date2}' `;
                 if (Object.keys(search)[x] == 'married') sql += ` married = ${search.married} `;
+                if (ada && Object.keys(search)[x] == 'date2') sql += ')';
             }
+            console.log(sql);
             db.all(sql, (err, rows) => {
                 if (err) throw err;
                 let banyak = rows.length;
