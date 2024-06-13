@@ -22,12 +22,14 @@ const db = new Pool({
     database: 'workdb',
 })
 
-try {
-    db.query('SELECT NOW()', (err, date) => {
-        if (err) throw err;
-        console.log(date.rows)
-    })
-} catch (err) {
-    console.log(err)
-}
+// try {
+//     db.query('SELECT NOW()', (err, date) => {
+//         if (err) throw err;
+//         console.log(date.rows)
+//     })
+// } catch (err) {
+//     console.log(err)
+// }
+
+module.exports = { db };
 
