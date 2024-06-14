@@ -9,23 +9,33 @@ class User {
                 callback();
             })
         } catch (error) {
-            console.log(err);
+            console.log(err, 'gagal tambah users');
         }
     }
 
-    static editAvatar(id, avatar, callback) {
+    static cek(callback) {
         try {
-            sql = `INSERT INTO users(avatar) VALUES ($1) WHERE id = $2`;
-            db.query(sql, [avatar, id], (err) => {
+            sql = `SELECT * FROM users`
+            db.query(sql, (error, result) => {
+                if (error) throw error;
+                callback(result.rows);
+            })
+        } catch (error) {
+            console.log(error, 'gagal baca users')
+        }
+    }
+
+    static editAvatar(userid, avatar, callback) {
+        try {
+            sql = `INSERT INTO users(avatar) VALUES ($1) WHERE userid = $2`;
+            db.query(sql, [avatar, userid], (err) => {
                 if (err) throw err;
                 callback();
             })
         } catch (err) {
-            console.log(err);
+            console.log(err, 'gagal edit avatar');
         }
     }
-
-
 }
 
 module.exports = User;
