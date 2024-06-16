@@ -7,7 +7,8 @@ const fileUpload = require('express-fileupload');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const app = express()
-const User = require('./models/User')
+const User = require('./models/User');
+const Todo = require('./models/Todo');
 
 app.set('view engine', 'ejs');
 app.use(fileUpload());
@@ -45,20 +46,29 @@ app.post('/', (req, res) => {
 app.get('/register', (req, res) => res.render('register'))
 
 app.post('/register', (req, res) => {
-    const { password, retypepass, email } = req.body;
-    if (password !== retypepass) {
-        let message = '';
-        res.render('/register', { message })
-    } else {
-        bcrypt.hash(password, saltRounds, function (err, hash) {
-            User.add(email, hash, () => res.redirect('/'))
-        });
+    try {
+        const { password, retypepass, email } = req.body;
+        if (password !== retypepass) {
+            let message = '';
+            res.render('/register', { message })
+        } else {
+            bcrypt.hash(password, saltRounds, function (err, hash) {
+                if (err) throw err;
+                User.add(email, hash, () => res.redirect('/'))
+            });
+        }
+    } catch (err) {
+        console.log(err);
     }
 })
 
-app.get('/todos', (req, res) => res.render('index'))
+app.get('/todos', (req, res) => {
+    let query = res.query;
+    query.limit = 5;
+    Todo.readTodo(query, (rows) => res.render('index', { rows }))
+})
 
-app.get('/avatar', (req, res) => res.render('avatar'))
+app.get('/avatar', (req, res) => res.render('avatar', { userid: req.session.userid }))
 
 app.post('/avatar', (req, res) => {
     let sampleFile;
@@ -81,5 +91,10 @@ app.post('/avatar', (req, res) => {
 });
 
 app.get('/todos/add', (req, res) => res.render('form'))
+
+app.post('/todos/add', (req, res) => {
+    let userid = req.session.userid;
+    Todo.addTodo(userid, req.body.title, () => res.redirect('/todos'))
+})
 
 app.listen(3000, () => console.log('berjalan di port 3000'));
