@@ -1,9 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session')
 const path = require('node:path');
 const { isLoggedIn } = require('./helpers/util');
 const fileUpload = require('express-fileupload');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const app = express()
+const User = require('./models/User')
 
 app.set('view engine', 'ejs');
 app.use(fileUpload());
@@ -11,11 +15,50 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'keyboard cat',
+    secret: 'ayam goreng',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true }
 }))
+
+app.get('/', (req, res) => res.render('login'))
+
+app.post('/', (req, res) => {
+    let message = '';
+    const { password, email } = req.body;
+    User.cek(email, (row) => {
+        if (row.length == 0) {
+            message = '';
+            res.render('login', { message })
+        } else {
+            if (row[0].password != password) {
+                message = '';
+                res.render('login', { message })
+            } else {
+                req.session.userid = row[0].userid;
+                res.redirect('/todos')
+            }
+        }
+    })
+})
+
+app.get('/register', (req, res) => res.render('register'))
+
+app.post('/register', (req, res) => {
+    const { password, retypepass, email } = req.body;
+    if (password !== retypepass) {
+        let message = '';
+        res.render('/register', { message })
+    } else {
+        bcrypt.hash(password, saltRounds, function (err, hash) {
+            User.add(email, hash, () => res.redirect('/'))
+        });
+    }
+})
+
+app.get('/todos', (req, res) => res.render('index'))
+
+app.get('/avatar', (req, res) => res.render('avatar'))
 
 app.post('/avatar', (req, res) => {
     let sampleFile;
@@ -36,16 +79,6 @@ app.post('/avatar', (req, res) => {
         }))
     }
 });
-
-app.get('/', /*isLoggedIn,*/(req, res) => res.render('login'))
-
-app.get('/register', (req, res) => res.render('register'))
-
-app.post('/register', (req, res) => { })
-
-app.get('/todos', (req, res) => res.render('index'))
-
-app.get('/avatar', (req, res) => res.render('avatar'))
 
 app.get('/todos/add', (req, res) => res.render('form'))
 

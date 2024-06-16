@@ -13,10 +13,10 @@ class User {
         }
     }
 
-    static cek(callback) {
+    static cek(email, callback) {
         try {
-            sql = `SELECT * FROM users`
-            db.query(sql, (error, result) => {
+            sql = `SELECT * FROM users WHERE email = $1`
+            db.query(sql, [email], (error, result) => {
                 if (error) throw error;
                 callback(result.rows);
             })
