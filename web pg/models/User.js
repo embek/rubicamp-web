@@ -3,7 +3,7 @@ const { db } = require('./pg')
 class User {
     static add(email, password, callback) {
         try {
-            sql = `INSERT INTO users(email, password) VALUES ($1,$2)`;
+            let sql = `INSERT INTO users(email, password) VALUES ($1,$2)`;
             db.query(sql, [email, password], (err) => {
                 if (err) throw err;
                 callback();
@@ -15,9 +15,11 @@ class User {
 
     static cek(email, callback) {
         try {
-            sql = `SELECT * FROM users WHERE email = $1`
+            let sql = `SELECT * FROM users WHERE email = $1`
+            console.log(sql, email);
             db.query(sql, [email], (error, result) => {
                 if (error) throw error;
+                // console.log(result.rows)
                 callback(result.rows);
             })
         } catch (error) {
@@ -27,7 +29,7 @@ class User {
 
     static editAvatar(userid, avatar, callback) {
         try {
-            sql = `INSERT INTO users(avatar) VALUES ($1) WHERE userid = $2`;
+            let sql = `INSERT INTO users(avatar) VALUES ($1) WHERE userid = $2`;
             db.query(sql, [avatar, userid], (err) => {
                 if (err) throw err;
                 callback();
