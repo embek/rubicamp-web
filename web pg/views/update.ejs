@@ -15,11 +15,23 @@
             <h1 class="text-center"><b>Adding Data</b></h1>
         </div>
         <div class="card-body">
-            <form action="/todos/add" method="post">
+            <form action="/edit/<%=rows[0].id%>" method="post">
                 <div class="row mb-3">
                     <label for="title" class="col-sm-2 col-form-label">Title</label>
                     <div class="col-sm-10">
-                        <input required type="text" class="form-control" id="title" name="title">
+                        <input value="<%=rows[0].title%>" type="text" class="form-control" id="title" name="title">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="deadline" class="col-sm-2 col-form-label">Deadline</label>
+                    <div class="col-sm-10">
+                        <input value="<%=rows[0].deadline%>" type="datetime-local" class="form-control" id="deadline" name="deadline">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="complete" class="col-sm-2 col-form-label">Complete</label>
+                    <div class="col-sm-10">
+                        <input <%rows[0].complete?'checked':''%> type="checkbox" id="complete" name="complete" value="true">
                     </div>
                 </div>
                 <input style="display: none;" id="save" type="submit" value="Save">

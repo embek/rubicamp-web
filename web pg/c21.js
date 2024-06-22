@@ -32,14 +32,12 @@ app.post('/', (req, res) => {
             res.render('register', { message })
         } else {
             bcrypt.compare(password, row[0].password, (err, same) => {
-                console.log(err, same)
                 if (err) throw err;
                 if (!same) {
                     message = 'password salah';
                     res.render('login', { message })
                 } else {
-                    req.session.user = { userid: row[0].userid, email: row[0].email };
-                    console.log(req.session)
+                    req.session.user = { userid: row[0].userid, email: row[0].email, avatar: row[0].avatar };
                     res.redirect('/todos')
                 }
             })
@@ -74,20 +72,32 @@ app.post('/register', (req, res) => {
 })
 
 app.get('/todos', isLoggedIn, (req, res) => {
-    console.log('masuk todos')
+    console.log('masuk todos');
+    console.table(req.session.user);
     let query = req.query || {};
     let url = req.url;
+    if (Object.keys(query).length == 0) url += '?page=1'
+    else if (url.search('page') == -1) url += '&page=1';
     query.limit = 5;
     if (!query.page) query.page = 1;
-    if (!query.sortBy) query.sortBy = 'userid';
-    if (!query.sortMode) query.sortMode = 'ASC';
-    let search = query;
+    if (!query.sortBy) {
+        url += '&sortBy=id'
+        query.sortBy = 'id';
+    }
+    if (!query.sortMode) {
+        url += '&sortMode=asc'
+        query.sortMode = 'asc';
+    }
+
+    query.complete ? query.complete = JSON.parse(query.complete) : '';
+    let search = JSON.parse(JSON.stringify(query));
+    search.complete ? search.complete = JSON.parse(search.complete) : '';
     let x = Object.keys(search).length;
     while (x--) {
-        if (Object.values(search)[x] == '' || Object.keys(search)[x] == 'page' || Object.keys(search)[x] == 'sortBy' || Object.keys(search)[x] == 'sortMode') delete search[Object.keys[x]];
+        if (Object.values(search)[x] == '' || Object.keys(search)[x] == 'page' || Object.keys(search)[x] == 'sortBy' || Object.keys(search)[x] == 'sortMode' || Object.keys(search)[x] == 'limit') delete search[Object.keys(search)[x]];
     }
     search.userid = req.session.user.userid;
-    Todo.readTodo(query, search, (rows, banyak) => res.render('index', { rows, email: req.session.user.email, query, url, banyak }))
+    Todo.readTodo(query, search, (rows, banyak) => res.render('index', { rows, email: req.session.user.email, avatar: req.session.user.avatar, query, url, banyak }))
 })
 
 app.get('/avatar', isLoggedIn, (req, res) => res.render('avatar', { user: req.session.user }))
@@ -96,16 +106,17 @@ app.post('/avatar', isLoggedIn, (req, res) => {
     let sampleFile;
     let uploadPath;
     let user = req.session.user;
+    console.log('masuk avatar post');
 
     if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send('No files were uploaded.');
+        return res.status(400).redirect('/todos');
     } else {
         // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
         sampleFile = req.files.avatar;
         uploadPath = __dirname + '/public/images/' + JSON.stringify(Date.now()) + sampleFile.name;
-
+        req.session.user.avatar = JSON.stringify(Date.now()) + sampleFile.name;
         // Use the mv() method to place the file somewhere on your server
-        User.editAvatar(user.userid, sampleFile.name, () => sampleFile.mv(uploadPath, function (err) {
+        User.editAvatar(user.userid, JSON.stringify(Date.now()) + sampleFile.name, () => sampleFile.mv(uploadPath, function (err) {
             if (err) return res.status(500).send(err);
             res.redirect('/todos');
         }))
@@ -119,9 +130,25 @@ app.post('/todos/add', isLoggedIn, (req, res) => {
     Todo.addTodo(user.userid, req.body.title, () => res.redirect('/todos'))
 })
 
-app.get('logout', (res, req) => {
-    req.session.destroy();
-    res.redirect('/')
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => res.redirect('/'));
+
+})
+
+app.get('/delete/:id', isLoggedIn, (req, res) => {
+    // console.log(req.params);
+    Todo.deleteTodo(Number(req.params.id), () => res.redirect('/todos'))
+})
+
+app.get('/edit/:id', isLoggedIn, (req, res) => {
+    Todo.readTodoById(Number(req.params.id), (rows) => {
+        res.render('update', { rows });
+    })
+})
+
+app.post('/edit/:id', isLoggedIn, (req, res) => {
+    console.log(req.body);
+    Todo.updateTodo(Number(req.params.id), req.body, () => res.redirect('/todos'))
 })
 
 app.listen(3000, () => console.log('berjalan di port 3000'));

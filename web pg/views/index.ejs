@@ -12,10 +12,17 @@
 <body>
     <div class="card" style="width: 70%;margin: 1% auto;">
         <div class="card-header">
-            <div class="float-start"><img style="border-radius: 50%;width: 35px;height: 35px;"
-                    onclick="window.location.href='/avatar'" src="30-1.jpg" alt="avatar"> email</div>
-            <div class="btn btn-secondary float-end" style="padding: auto;"><i
-                    class="fa-solid fa-right-from-bracket"></i> sign out</div>
+            <div class="float-start"><img class="float-start"
+                    style="border-radius: 50%;width: 35px;height: 35px; margin-right: 0.5em; cursor: pointer;"
+                    onclick="window.location.href='/avatar'" src="images/<%=avatar%>" alt="avatar">
+                <div class="h3 float-end"><strong>
+                        <%=email%>
+                    </strong></div>
+
+            </div>
+            <div class="btn btn-secondary float-end" style="padding: auto;" onclick="window.location.href='/logout'"><i
+                    class="fa-solid fa-right-from-bracket"></i> sign out
+            </div>
         </div>
         <div class="card-header">
             <h1 class="text-center"><b>PostgreSQL Breads(Browse,Read,Edit,Add,Delete,Sort)</b></h1>
@@ -25,38 +32,39 @@
                 <div class="row mb-3">
                     <label for="title" class="col-sm-2 col-form-label">Title</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="title" name="title">
+                        <input type="text" class="form-control" id="title" name="title"
+                            value="<%= query.title? query.title:''%>">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class=" col-sm-2 col-form-label">Deadline</label>
                     <div class="col">
-                        <input type="date" class="form-control" name="date1">
+                        <input type="date" class="form-control" name="date1" value="<%= query.date1? query.date1:''%>">
                     </div>
                     <div class="col-sm-1 text-center" style="margin: auto;">
                         s.d.
                     </div>
                     <div class="col">
-                        <input type="date" class="form-control" name="date2">
+                        <input type="date" class="form-control" name="date2" value="<%= query.date2? query.date2:''%>">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="complete" class="col-sm-2 col-form-label">Complete</label>
                     <div class="col-sm-10">
-                        <select class="form-select" name="married" id="married">
-                            <option value="" disabled hidden selected>-select complete-</option>
-                            <option value=true>True</option>
-                            <option value=false>False</option>
+                        <select class="form-select" name="complete" id="complete">
+                            <option value="" disabled hidden <%= typeof query.complete=='undefined'?'selected':'' %>>-select complete-</option>
+                            <option value=true <%= typeof query.complete=='undefined'?'':query.complete?'selected':'' %>>True</option>
+                            <option value=false <%= typeof query.complete=='undefined'?'':query.complete?'':'selected' %>>False</option>
                         </select>
                     </div>
                 </div>
                 <fieldset class="row mb-3">
                     <legend class="col-form-label col-sm-2 pt-0">Operation</legend>
                     <div class="col-sm-5">
-                        <input class="form-check-input" type="radio" name="operation" id="OR" value="OR" checked>
+                        <input class="form-check-input" type="radio" name="operation" id="OR" value="OR" <%=query.operation=='OR'?'checked':''%>>
                         <label style="margin-right: 0.5em;" for="OR">OR</label>
 
-                        <input class="form-check-input" type="radio" name="operation" id="AND" value="AND">
+                        <input class="form-check-input" type="radio" name="operation" id="AND" value="AND" <%=query.operation=='AND'?'checked':''%>>
                         <label for="AND">AND</label>
                     </div>
                 </fieldset>
@@ -72,9 +80,15 @@
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th><i class="fa-solid <%= query.sortBy!='title'? 'fa-sort': query.sortMode=='ASC'? 'fa-sort-up':'fa-sort-down' %> "></i> Title</th>
-                        <th><i class="fa-solid <%= query.sortBy!='complete'? 'fa-sort': query.sortMode=='ASC'? 'fa-sort-up':'fa-sort-down' %> "></i> Complete</th>
-                        <th><i class="fa-solid <%= query.sortBy!='deadline'? 'fa-sort': query.sortMode=='ASC'? 'fa-sort-up':'fa-sort-down' %> "></i> Deadline</th>
+                        <th style="cursor: pointer;" onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=title`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'"><i
+                                class="fa-solid <%= query.sortBy!='title'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
+                            Title</th>
+                        <th style="cursor: pointer;" onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=complete`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'"><i
+                                class="fa-solid <%= query.sortBy!='complete'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
+                            Complete</th>
+                        <th style="cursor: pointer;" onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=deadline`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'"><i
+                                class="fa-solid <%= query.sortBy!='deadline'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
+                            Deadline</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -94,10 +108,10 @@
                                 <%= isi.deadline %>
                             </td>
                             <td>
-                                <a class="btn btn-success" style="width: 6em;" href="/edit/<%= isi.id %>">Update</a>
-                                <a class="btn btn-danger" style="width: 6em;"
+                                <a class="btn btn-success" href="/edit/<%= isi.id %>"><i class="fa-solid fa-pen"></i></a>
+                                <a class="btn btn-danger"
                                     onclick="return confirm(`apakah kamu yakin menghapus data '<%= isi.title%>'`)"
-                                    href="/delete/<%= isi.id %>">Delete</a>
+                                    href="/delete/<%= isi.id %>"><i class="fa-solid fa-trash"></i></a>
                             </td>
                         </tr>
                         <% }) %>
@@ -108,27 +122,29 @@
             <a class="btn btn-primary float-start" href="/todos/add"><i class="fa-solid fa-plus"></i></a>
             <nav class="float-end" aria-label="Page navigation example">
                 <ul class="pagination">
-                    <%if (page>1){%>
+                    <%if (query.page>1){%>
                         <li class="page-item">
                             <a class="page-link" href="<%= url.replace(`page=${query.page}`,`page=${query.page-1}`)%>"
                                 aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                     <% }%>
-                    <% for (let i=1;i<=Math.ceil(banyak/query.limit);i++){%>
-                      <li class="page-item"><a class="page-link <%= query.page==i? 'active':''%>"
-                            href="<%= url.replace(`page=${query.page}`,`page=${i}`)%>">
-                            <%=i%>
-                      </a></li>
-                    <%}%>
-                    <%if (page<Math.ceil(banyak/query.limit)){%>
-                         <li class="page-item">
-                             <a class="page-link" href="<%= url.replace(`page=${query.page}`,`page=${query.page+1}`)%>" aria-label="Next">
-                                 <span aria-hidden="true">&raquo;</span>
-                          </a>
-                       </li>
-                    <% }%>
+                        <% }%>
+                            <% for (let i=1;i<=Math.ceil(banyak/query.limit);i++){%>
+                                <li class="page-item"><a class="page-link <%= query.page==i? 'active':''%>"
+                                        href="<%= url.replace(`page=${query.page}`,`page=${i}`)%>">
+                                        <%=i%>
+                                    </a></li>
+                                <%}%>
+                                    <%if (query.page<Math.ceil(banyak/query.limit)){%>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="<%= url.replace(`page=${query.page}`,`page=${Number(query.page)+1}`)%>"
+                                                aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                        <% }%>
                 </ul>
             </nav>
         </div>
