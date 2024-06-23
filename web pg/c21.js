@@ -116,7 +116,8 @@ app.get('/todos', isLoggedIn, (req, res) => {
     while (x--) {
         if (Object.values(search)[x] === '' || Object.keys(search)[x] == 'page' || Object.keys(search)[x] == 'sortBy' || Object.keys(search)[x] == 'sortMode' || Object.keys(search)[x] == 'limit') delete search[Object.keys(search)[x]];
     }
-    search.userid = req.session.user.userid;
+    query.userid = req.session.user.userid;
+    search = preferredOrder(search, ['operation', 'title', 'complete', 'date1', 'date2']);
     Todo.readTodo(query, search, (rows, banyak) => {
         rows.forEach(isi => isi.deadline = moment(isi.deadline).format('DD MMMM YYYY HH:mm'));
         res.render('index', { rows, email: req.session.user.email, avatar: req.session.user.avatar, query, url, banyak })
@@ -181,5 +182,15 @@ app.post('/edit/:id', isLoggedIn, (req, res) => {
     if (typeof req.body.complete === 'undefined') req.body.complete = false;
     Todo.updateTodo(Number(req.params.id), req.body, () => res.redirect('/todos'))
 })
+
+function preferredOrder(obj, order) {
+    var newObject = {};
+    for (var i = 0; i < order.length; i++) {
+        if (obj.hasOwnProperty(order[i])) {
+            newObject[order[i]] = obj[order[i]];
+        }
+    }
+    return newObject;
+}
 
 app.listen(3000, () => console.log('berjalan di port 3000'));

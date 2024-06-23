@@ -2,51 +2,63 @@ const moment = require('moment');
 const { db } = require('./pg');
 
 class Todo {
-    //query mungkin berisi page,limit,sortBy,sortMode, search mungkin berisi title,date1,date2,complete,operation
+    //query mungkin berisi page,limit,sortBy,sortMode,userid search mungkin berisi title,date1,date2,complete,operation
     static readTodo(query, search, callback) {
         try {
             let sql = `SELECT * FROM todos WHERE `;
             let params = [];
             let counter = 0;
+            let dua = typeof search.date1 !== 'undefined' && typeof search.date2 !== 'undefined';
             let operator = search.operation;
             delete search.operation;
-            if (Object.keys(search).length > 1) {
-                for (let x in Object.keys(search)) {
-                    if (x > 0 && x < Object.keys(search).length - 1) {
-                        if (Object.keys(search)[x] == 'date1' || Object.keys(search)[x] == 'date2') sql += ' AND '
-                        else if (Object.keys(search)[x - 1] == 'date1' || Object.keys(search)[x - 1] == 'date2') sql += ' AND '
-                        else sql += ` ${operator} `;
-                    }
-
-                    if (Object.keys(search)[x] == 'title') {
-                        // counter++;
-                        sql += ` title like '%${search.title}%'`;
-                        // params.push(search.title);
-                    }
-                    if (Object.keys(search)[x] == 'date1') {
-                        counter++;
-                        sql += ` deadline >= $${counter} `;
-                        params.push(search.date1);
-                    }
-                    if (Object.keys(search)[x] == 'date2') {
-                        counter++;
-                        sql += ` deadline <= $${counter}`;
-                        params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
-                    }
-                    if (Object.keys(search)[x] == 'complete') {
-                        counter++;
-                        sql += ` complete = $${counter}`;
-                        params.push(search.complete);
-                    }
+            if (Object.keys(search).length > 0) {
+                sql += '('
+                if (dua) {
+                    counter++;
+                    sql += ` deadline >= $${counter} AND`;
+                    params.push(search.date1);
+                    delete search.date1;
+                    counter++;
+                    sql += ` deadline <= $${counter}`;
+                    params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
+                    delete search.date2;
+                } else if (typeof search.date1 !== 'undefined') {
+                    counter++;
+                    sql += ` deadline >= $${counter} `;
+                    params.push(search.date1);
+                    delete search.date1;
+                } else if (typeof search.date2 !== 'undefined') {
+                    counter++;
+                    sql += ` deadline <= $${counter}`;
+                    params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
+                    delete search.date2;
                 }
-                sql += ' AND '
+                sql += ') '
+                if (Object.keys(search).length > 0) {
+                    sql += ' AND (';
+                    for (let x in Object.keys(search)) {
+                        if (x > 0 && x < Object.keys(search).length) sql += ` ${operator} `;
+
+                        if (Object.keys(search)[x] == 'title') {
+                            // counter++;
+                            sql += ` title like '%${search.title}%'`;
+                            // params.push(search.title);
+                        }
+                        if (Object.keys(search)[x] == 'complete') {
+                            counter++;
+                            sql += ` complete = $${counter}`;
+                            params.push(search.complete);
+                        }
+                    }
+                    sql += ')';
+                }
+                sql += ' AND ';
             }
             counter++;
             sql += ` userid = $${counter} `;
-            params.push(search.userid);
+            params.push(query.userid);
             db.query(sql.replace('*', 'count(*) '), params, (err, result) => {
-                console.log(sql, params, 'dalam query pertama')
-                console.log(result.rows);
+                console.log(sql, params, 'dalam query pertama');
                 if (err) throw err;
                 let banyak = result.rows[0].count;
                 if (['title', 'complete', 'deadline', 'id'].includes(query.sortBy)) {
