@@ -223,8 +223,11 @@
     </div> -->
       <button class="btn btn-primary w-100 py-2" type="submit">Sign up</button>
       <p class="mt-5 mb-3 text-body-secondary text-center">Have an account? Please <a href="/">sign in</a></p>
-      <p class="mt-5 mb-3 text-body-secondary text-center">© 2017–2024</p>
     </form>
+    <div <%=typeof flash==='undefined' ?'hidden':''%> class="alert alert-success text-center" role="alert">
+      <%=flash%>
+    </div>
+    <p class="mt-5 mb-3 text-body-secondary text-center">© 2017–2024</p>
   </main>
   <script src="login_files/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

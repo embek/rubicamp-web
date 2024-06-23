@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const session = require('express-session')
+const session = require('express-session');
+const flash = require('connect-flash');
 const path = require('node:path');
 const { isLoggedIn } = require('./helpers/util');
 const fileUpload = require('express-fileupload');
@@ -10,8 +11,10 @@ const app = express()
 const User = require('./models/User');
 const Todo = require('./models/Todo');
 const moment = require('moment');
+const { unlinkSync } = require('node:fs');
 
 app.set('view engine', 'ejs');
+app.use(flash());
 app.use(fileUpload());
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -22,21 +25,27 @@ app.use(session({
     saveUninitialized: true
 }))
 
-app.get('/', (req, res) => res.render('login'))
+app.get('/', (req, res) => {
+    let flash = req.flash('fail')[0] || req.flash('success')[0];
+    console.log(req.flash())
+    res.render('login', { flash })
+})
 
 app.post('/', (req, res) => {
     let message = '';
     const { password, email } = req.body;
     User.cek(email, (row) => {
         if (row.length == 0) {
-            message = '';
-            res.render('register', { message })
+            message = 'user doesn\'t exist, please sign up!';
+            req.flash('fail', message)
+            res.redirect('/register')
         } else {
             bcrypt.compare(password, row[0].password, (err, same) => {
                 if (err) throw err;
                 if (!same) {
-                    message = 'password salah';
-                    res.render('login', { message })
+                    message = 'wrong password';
+                    req.flash('fail', message)
+                    res.redirect('/')
                 } else {
                     req.session.user = { userid: row[0].userid, email: row[0].email, avatar: row[0].avatar };
                     res.redirect('/todos')
@@ -46,23 +55,33 @@ app.post('/', (req, res) => {
     })
 })
 
-app.get('/register', (req, res) => res.render('register'))
+app.get('/register', (req, res) => {
+    let flash = req.flash('fail')[0] || req.flash('success')[0];
+    console.log(req.flash())
+    res.render('register', { flash })
+})
 
 app.post('/register', (req, res) => {
     let message = '';
     try {
         const { password, retypepass, email } = req.body;
         User.cek(email, (row) => {
-            if (row.length > 1) {
-                message = 'user already exist';
-                res.render('login', { message })
-            } else if (password !== retypepass) {
-                message = 'password tidak sama';
-                res.render('register', { message })
+            if (password !== retypepass) {
+                message = 'password doesn\'t match';
+                req.flash('fail', message);
+                res.redirect('/register')
+            } else if (row.length > 0) {
+                message = 'user already exist, please sign in!';
+                req.flash('fail', message);
+                res.redirect('/');
             } else {
                 bcrypt.hash(password, saltRounds, function (err, hash) {
                     if (err) throw err;
-                    User.add(email, hash, () => res.redirect('/'))
+                    User.add(email, hash, () => {
+                        message = 'successfully registered, please sign in!';
+                        req.flash('success', message);
+                        res.redirect('/')
+                    })
                 });
             }
         })
@@ -109,6 +128,7 @@ app.get('/avatar', isLoggedIn, (req, res) => res.render('avatar', { user: req.se
 app.post('/avatar', isLoggedIn, (req, res) => {
     let sampleFile;
     let uploadPath;
+    let previousAvatar;
     let user = req.session.user;
     // console.log('masuk avatar post');
 
@@ -117,10 +137,15 @@ app.post('/avatar', isLoggedIn, (req, res) => {
     } else {
         // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
         sampleFile = req.files.avatar;
-        uploadPath = __dirname + '/public/images/' + JSON.stringify(Date.now()) + sampleFile.name;
-        req.session.user.avatar = JSON.stringify(Date.now()) + sampleFile.name;
+        let fileName = JSON.stringify(Date.now()) + sampleFile.name;
+        uploadPath = __dirname + '/public/images/' + fileName;
+        if (req.session.user.avatar != 'default-avatar.png') {
+            previousAvatar = __dirname + '/public/images/' + req.session.user.avatar;
+            unlinkSync(previousAvatar);
+        }
+        req.session.user.avatar = fileName;
         // Use the mv() method to place the file somewhere on your server
-        User.editAvatar(user.userid, JSON.stringify(Date.now()) + sampleFile.name, () => sampleFile.mv(uploadPath, function (err) {
+        User.editAvatar(user.userid, fileName, () => sampleFile.mv(uploadPath, function (err) {
             if (err) return res.status(500).send(err);
             res.redirect('/todos');
         }))
