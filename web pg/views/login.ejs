@@ -219,8 +219,9 @@
       <p class="mt-5 mb-3 text-body-secondary text-center">Doesn't have an account? Please <a href="/register">sign
           up</a></p>
     </form>
-    <div <%=typeof flash==='undefined' ?'hidden':''%> class="alert alert-success text-center" role="alert">
-      <%=flash%>
+    <div <%=fail.length==0 && success.length==0?'hidden':''%> class="alert <%=fail.length>0?'alert-danger':'alert-success' %>
+        text-center" role="alert">
+        <%=fail.length>0?fail[0]:success[0]%>
     </div>
     <p class="mt-5 mb-3 text-body-secondary text-center">© 2017–2024</p>
   </main>

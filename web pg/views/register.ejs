@@ -224,9 +224,10 @@
       <button class="btn btn-primary w-100 py-2" type="submit">Sign up</button>
       <p class="mt-5 mb-3 text-body-secondary text-center">Have an account? Please <a href="/">sign in</a></p>
     </form>
-    <div <%=typeof flash==='undefined' ?'hidden':''%> class="alert alert-success text-center" role="alert">
-      <%=flash%>
-    </div>
+    <div <%=fail.length==0 && success.length==0?'hidden':''%> class="alert <%=fail.length>0?'alert-danger':'alert-success' %>
+      text-center" role="alert">
+      <%=fail.length>0?fail[0]:success[0]%>
+  </div>
     <p class="mt-5 mb-3 text-body-secondary text-center">© 2017–2024</p>
   </main>
   <script src="login_files/bootstrap.bundle.min.js"

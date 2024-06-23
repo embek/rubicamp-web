@@ -26,9 +26,7 @@ app.use(session({
 }))
 
 app.get('/', (req, res) => {
-    let flash = req.flash('fail')[0] || req.flash('success')[0];
-    console.log(req.flash())
-    res.render('login', { flash })
+    res.render('login', { fail: req.flash('fail'), success: req.flash('success') })
 })
 
 app.post('/', (req, res) => {
@@ -56,9 +54,7 @@ app.post('/', (req, res) => {
 })
 
 app.get('/register', (req, res) => {
-    let flash = req.flash('fail')[0] || req.flash('success')[0];
-    console.log(req.flash())
-    res.render('register', { flash })
+    res.render('register', { fail: req.flash('fail'), success: req.flash('success') })
 })
 
 app.post('/register', (req, res) => {
@@ -71,9 +67,9 @@ app.post('/register', (req, res) => {
                 req.flash('fail', message);
                 res.redirect('/register')
             } else if (row.length > 0) {
-                message = 'user already exist, please sign in!';
+                message = 'user already exist';
                 req.flash('fail', message);
-                res.redirect('/');
+                res.redirect('/register');
             } else {
                 bcrypt.hash(password, saltRounds, function (err, hash) {
                     if (err) throw err;
