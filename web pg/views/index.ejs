@@ -32,7 +32,7 @@
                 <div class="row mb-3">
                     <label for="title" class="col-sm-2 col-form-label">Title</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="title" name="title"
+                        <input placeholder="insert your title" type="text" class="form-control" id="title" name="title"
                             value="<%= query.title? query.title:''%>">
                     </div>
                 </div>
@@ -53,15 +53,15 @@
                     <div class="col-sm-10">
                         <select class="form-select" name="complete" id="complete">
                             <option value="" disabled hidden <%= typeof query.complete=='undefined'?'selected':'' %>>-select complete-</option>
-                            <option value=true <%= typeof query.complete=='undefined'?'':query.complete?'selected':'' %>>True</option>
-                            <option value=false <%= typeof query.complete=='undefined'?'':query.complete?'':'selected' %>>False</option>
+                            <option value="true" <%= typeof query.complete=='undefined'?'':query.complete?'selected':'' %>>Done</option>
+                            <option value="false" <%= typeof query.complete=='undefined'?'':query.complete?'':'selected' %>>Not Yet</option>
                         </select>
                     </div>
                 </div>
                 <fieldset class="row mb-3">
                     <legend class="col-form-label col-sm-2 pt-0">Operation</legend>
                     <div class="col-sm-5">
-                        <input class="form-check-input" type="radio" name="operation" id="OR" value="OR" <%=query.operation=='OR'?'checked':''%>>
+                        <input class="form-check-input" type="radio" name="operation" id="OR" value="OR" <%=typeof query.operation=='undefined'?'checked':query.operation=='OR'?'checked':''%>>
                         <label style="margin-right: 0.5em;" for="OR">OR</label>
 
                         <input class="form-check-input" type="radio" name="operation" id="AND" value="AND" <%=query.operation=='AND'?'checked':''%>>
@@ -95,19 +95,19 @@
                 <tbody>
                     <% rows.forEach((isi, index)=> { %>
                         <tr>
-                            <td>
+                            <td style="<%=Date.now()>Date.parse(isi.deadline)? 'background-color: #ffb9b9;':'' %>">
                                 <%= query.limit*(query.page-1)+index+1 %>
                             </td>
-                            <td>
+                            <td style="<%=Date.now()>Date.parse(isi.deadline)? 'background-color: #ffb9b9;':'' %>">
                                 <%= isi.title %>
                             </td>
-                            <td>
-                                <%= isi.complete %>
+                            <td style="<%=Date.now()>Date.parse(isi.deadline)? 'background-color: #ffb9b9;':'' %>">
+                                <%= isi.complete? 'Done' : 'Not Yet' %>
                             </td>
-                            <td>
+                            <td style="<%=Date.now()>Date.parse(isi.deadline)? 'background-color: #ffb9b9;':'' %>">
                                 <%= isi.deadline %>
                             </td>
-                            <td>
+                            <td style="<%=Date.now()>Date.parse(isi.deadline)? 'background-color: #ffb9b9;':'' %>">
                                 <a class="btn btn-success" href="/edit/<%= isi.id %>"><i class="fa-solid fa-pen"></i></a>
                                 <a class="btn btn-danger"
                                     onclick="return confirm(`apakah kamu yakin menghapus data '<%= isi.title%>'`)"

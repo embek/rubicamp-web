@@ -9,6 +9,7 @@ const saltRounds = 10;
 const app = express()
 const User = require('./models/User');
 const Todo = require('./models/Todo');
+const moment = require('moment');
 
 app.set('view engine', 'ejs');
 app.use(fileUpload());
@@ -72,8 +73,8 @@ app.post('/register', (req, res) => {
 })
 
 app.get('/todos', isLoggedIn, (req, res) => {
-    console.log('masuk todos');
-    console.table(req.session.user);
+    // console.log('masuk todos');
+    // console.table(req.session.user);
     let query = req.query || {};
     let url = req.url;
     if (Object.keys(query).length == 0) url += '?page=1'
@@ -88,16 +89,19 @@ app.get('/todos', isLoggedIn, (req, res) => {
         url += '&sortMode=asc'
         query.sortMode = 'asc';
     }
-
-    query.complete ? query.complete = JSON.parse(query.complete) : '';
+    console.log(query);
+    typeof query.complete === 'undefined' ? '' : query.complete = JSON.parse(query.complete);
     let search = JSON.parse(JSON.stringify(query));
-    search.complete ? search.complete = JSON.parse(search.complete) : '';
+    typeof search.complete === 'undefined' ? '' : search.complete = JSON.parse(search.complete);
     let x = Object.keys(search).length;
     while (x--) {
-        if (Object.values(search)[x] == '' || Object.keys(search)[x] == 'page' || Object.keys(search)[x] == 'sortBy' || Object.keys(search)[x] == 'sortMode' || Object.keys(search)[x] == 'limit') delete search[Object.keys(search)[x]];
+        if (Object.values(search)[x] === '' || Object.keys(search)[x] == 'page' || Object.keys(search)[x] == 'sortBy' || Object.keys(search)[x] == 'sortMode' || Object.keys(search)[x] == 'limit') delete search[Object.keys(search)[x]];
     }
     search.userid = req.session.user.userid;
-    Todo.readTodo(query, search, (rows, banyak) => res.render('index', { rows, email: req.session.user.email, avatar: req.session.user.avatar, query, url, banyak }))
+    Todo.readTodo(query, search, (rows, banyak) => {
+        rows.forEach(isi => isi.deadline = moment(isi.deadline).format('DD MMMM YYYY HH:mm'));
+        res.render('index', { rows, email: req.session.user.email, avatar: req.session.user.avatar, query, url, banyak })
+    })
 })
 
 app.get('/avatar', isLoggedIn, (req, res) => res.render('avatar', { user: req.session.user }))
@@ -106,7 +110,7 @@ app.post('/avatar', isLoggedIn, (req, res) => {
     let sampleFile;
     let uploadPath;
     let user = req.session.user;
-    console.log('masuk avatar post');
+    // console.log('masuk avatar post');
 
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).redirect('/todos');
@@ -142,12 +146,14 @@ app.get('/delete/:id', isLoggedIn, (req, res) => {
 
 app.get('/edit/:id', isLoggedIn, (req, res) => {
     Todo.readTodoById(Number(req.params.id), (rows) => {
+        rows.forEach(isi => isi.deadline = moment(isi.deadline).format('YYYY-MM-DD[T]HH:mm'))
         res.render('update', { rows });
     })
 })
 
 app.post('/edit/:id', isLoggedIn, (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
+    if (typeof req.body.complete === 'undefined') req.body.complete = false;
     Todo.updateTodo(Number(req.params.id), req.body, () => res.redirect('/todos'))
 })
 
