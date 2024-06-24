@@ -9,40 +9,44 @@ class Todo {
             let params = [];
             let counter = 0;
             let dua = typeof search.date1 !== 'undefined' && typeof search.date2 !== 'undefined';
+            let adaDate = typeof search.date1 !== 'undefined' || typeof search.date2 !== 'undefined';
             let operator = search.operation;
             delete search.operation;
             if (Object.keys(search).length > 0) {
-                sql += '('
-                if (dua) {
-                    counter++;
-                    sql += ` deadline >= $${counter} AND`;
-                    params.push(search.date1);
-                    delete search.date1;
-                    counter++;
-                    sql += ` deadline <= $${counter}`;
-                    params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
-                    delete search.date2;
-                } else if (typeof search.date1 !== 'undefined') {
-                    counter++;
-                    sql += ` deadline >= $${counter} `;
-                    params.push(search.date1);
-                    delete search.date1;
-                } else if (typeof search.date2 !== 'undefined') {
-                    counter++;
-                    sql += ` deadline <= $${counter}`;
-                    params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
-                    delete search.date2;
+                if (adaDate) {
+                    sql += '('
+                    if (dua) {
+                        counter++;
+                        sql += ` deadline >= $${counter} AND`;
+                        params.push(search.date1);
+                        delete search.date1;
+                        counter++;
+                        sql += ` deadline <= $${counter}`;
+                        params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
+                        delete search.date2;
+                    } else if (typeof search.date1 !== 'undefined') {
+                        counter++;
+                        sql += ` deadline >= $${counter} `;
+                        params.push(search.date1);
+                        delete search.date1;
+                    } else if (typeof search.date2 !== 'undefined') {
+                        counter++;
+                        sql += ` deadline <= $${counter}`;
+                        params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
+                        delete search.date2;
+                    }
+                    sql += ') '
                 }
-                sql += ') '
                 if (Object.keys(search).length > 0) {
-                    sql += ' AND (';
+                    if (adaDate) sql += ' AND ('
+                    else sql += ' ( ';
                     for (let x in Object.keys(search)) {
                         if (x > 0 && x < Object.keys(search).length) sql += ` ${operator} `;
 
                         if (Object.keys(search)[x] == 'title') {
-                            // counter++;
-                            sql += ` title like '%${search.title}%'`;
-                            // params.push(search.title);
+                            counter++;
+                            sql += ` title like '%' || $${counter} || '%'`;
+                            params.push(search.title);
                         }
                         if (Object.keys(search)[x] == 'complete') {
                             counter++;
