@@ -17,7 +17,7 @@ class Todo {
                     sql += '('
                     if (dua) {
                         counter++;
-                        sql += ` deadline >= $${counter} AND`;
+                        sql += `deadline >= $${counter} AND`;
                         params.push(search.date1);
                         delete search.date1;
                         counter++;
@@ -26,31 +26,31 @@ class Todo {
                         delete search.date2;
                     } else if (typeof search.date1 !== 'undefined') {
                         counter++;
-                        sql += ` deadline >= $${counter} `;
+                        sql += `deadline >= $${counter}`;
                         params.push(search.date1);
                         delete search.date1;
                     } else if (typeof search.date2 !== 'undefined') {
                         counter++;
-                        sql += ` deadline <= $${counter}`;
+                        sql += `deadline <= $${counter}`;
                         params.push(moment(search.date2).add(1, 'day').format('YYYY-MM-DD'));
                         delete search.date2;
                     }
-                    sql += ') '
+                    sql += ')'
                 }
                 if (Object.keys(search).length > 0) {
                     if (adaDate) sql += ' AND ('
-                    else sql += ' ( ';
+                    else sql += ' (';
                     for (let x in Object.keys(search)) {
                         if (x > 0 && x < Object.keys(search).length) sql += ` ${operator} `;
 
                         if (Object.keys(search)[x] == 'title') {
                             counter++;
-                            sql += ` title like '%' || $${counter} || '%'`;
+                            sql += `title like '%' || $${counter} || '%'`;
                             params.push(search.title);
                         }
                         if (Object.keys(search)[x] == 'complete') {
                             counter++;
-                            sql += ` complete = $${counter}`;
+                            sql += `complete = $${counter}`;
                             params.push(search.complete);
                         }
                     }
@@ -59,16 +59,16 @@ class Todo {
                 sql += ' AND ';
             }
             counter++;
-            sql += ` userid = $${counter} `;
+            sql += `userid = $${counter}`;
             params.push(query.userid);
-            db.query(sql.replace('*', 'count(*) '), params, (err, result) => {
-                console.log(sql, params, 'dalam query pertama');
+            db.query(sql.replace('*', 'count(*)'), params, (err, result) => {
+                console.log(sql.replace('*', 'count(*)'), params, 'dalam query pertama');
                 if (err) throw err;
                 let banyak = result.rows[0].count;
                 if (['title', 'complete', 'deadline', 'id'].includes(query.sortBy)) {
                     sql += ` ORDER BY ${query.sortBy} `;
-                    if (query.sortMode == 'desc') sql += ` DESC `
-                    else sql += ` ASC `;
+                    if (query.sortMode == 'desc') sql += `DESC`
+                    else sql += `ASC`;
                 } else throw 'sortBy tidak sesuai';
                 let offset = (query.page - 1) * query.limit;
                 sql += ` LIMIT $${counter + 1} OFFSET $${counter + 2}`;

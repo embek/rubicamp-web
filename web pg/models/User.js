@@ -16,7 +16,7 @@ class User {
     static cek(email, callback) {
         try {
             let sql = `SELECT * FROM users WHERE email = $1`
-            console.log(sql, email);
+            // console.log(sql, email, 'cek user');
             db.query(sql, [email], (error, result) => {
                 if (error) throw error;
                 // console.log(result.rows)
