@@ -36,7 +36,7 @@ app.post('/', (req, res) => {
         if (row.length == 0) {
             message = 'user doesn\'t exist, please sign up!';
             req.flash('fail', message)
-            res.redirect('/register')
+            res.redirect('/')
         } else {
             bcrypt.compare(password, row[0].password, (err, same) => {
                 if (err) throw err;
