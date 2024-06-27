@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/fontawesome.min.css">
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="h3 text-center">Todo List</h1>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <label for="title" class="col-sm-2 col-form-label">Title</label>
+                <div class="col-sm-10">
+                    <input placeholder="insert your title" type="text" class="form-control" id="title" name="title"
+                        value="<%= query.title? query.title:''%>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class=" col-sm-2 col-form-label">Deadline</label>
+                <div class="col">
+                    <input type="date" class="form-control" name="date1" value="<%= query.date1? query.date1:''%>">
+                </div>
+                <div class="col-sm-1 text-center" style="margin: auto;">
+                    s.d.
+                </div>
+                <div class="col">
+                    <input type="date" class="form-control" name="date2" value="<%= query.date2? query.date2:''%>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="complete" class="col-sm-2 col-form-label">Complete</label>
+                <div class="col-sm-10">
+                    <select class="form-select" name="complete" id="complete">
+                        <option value="" disabled hidden <%=typeof query.complete=='undefined' ?'selected':'' %>>-select
+                            complete-</option>
+                        <option value="true" <%=typeof query.complete=='undefined' ?'':query.complete?'selected':'' %>
+                            >Done</option>
+                        <option value="false" <%=typeof query.complete=='undefined' ?'':query.complete?'':'selected' %>
+                            >Not Yet</option>
+                    </select>
+                </div>
+            </div>
+            <a class="btn btn-success" href="http://">sort by deadline</a>
+            <a href="/todos" class="btn btn-warning"><i class="fa-solid fa-arrows-rotate"></i></a>
+            <button type="submit" style="margin-right: 0.5em;" class="btn btn-info float-start"><i
+                    class="fa-solid fa-magnifying-glass"></i></button>
+
+            </form>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</body>

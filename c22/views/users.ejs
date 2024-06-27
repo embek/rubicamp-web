@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Breads(Browse, Read, Edit, Add, Delete, Sort)</title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/fontawesome.min.css">
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="h3 text-center">MongoDB Breads(Browse, Read, Edit, Add, Delete, Sort)</h1>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">An item</li>
+                <li class="list-group-item">A second item</li>
+                <li class="list-group-item">A third item</li>
+            </ul>
+            <form action="" method="get">
+                <div class="col">
+                    <input type="text" class="form-control" id="search" name="search">
+                </div>
+                <button type="submit"></button>
+            </form>
+            <!-- <a href="http://"></a>  reset-->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th style="cursor: pointer;"
+                            onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=title`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'">
+                            <i
+                                class="fa-solid <%= query.sortBy!='title'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
+                            Title
+                        </th>
+                        <th style="cursor: pointer;"
+                            onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=complete`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'">
+                            <i
+                                class="fa-solid <%= query.sortBy!='complete'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
+                            Complete
+                        </th>
+                        <th style="cursor: pointer;"
+                            onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=deadline`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'">
+                            <i
+                                class="fa-solid <%= query.sortBy!='deadline'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
+                            Deadline
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="isi"></tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <!-- <a href="http://"></a> buat modal create user-->
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>
+
+</html>
