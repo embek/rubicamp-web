@@ -4,6 +4,17 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+async function main() {
+  const url = 'mongodb://127.0.0.1:27017';
+  const client = new MongoClient(url);
+  const dbName = 'tododb';
+  await client.connect();
+  console.log('Connected successfully to server');
+  const db = client.db(dbName);
+  return db;
+}
+
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
