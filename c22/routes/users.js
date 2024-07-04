@@ -2,49 +2,55 @@ var express = require('express');
 const User = require('../models/User');
 var router = express.Router();
 
-router.get('/', async function (req, res, next) {
+module.exports = (db) => {
+  const users = db.collection('users');
+  router.get('/', async function (req, res, next) {
     try {
-        const data = await User.readUser(req.query);
-        res.status(200).json({ data, total, pages, page: req.query.page, limit: req.query.limit })
+      const total = await users.count({ name: `/${req.query}/` });
+      const pages = Math.ceil(total / req.limit);
+      const data = await users.find({ name: `/${req.query}/` }, { _id: 1, name: 1, phone: 1 }).sort({ _id: -1 }).limit(req.limit).skip((req.page - 1) * req.limit).toArray();
+      res.status(200).json({ data, total, pages, page: req.page, limit: req.limit });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
     }
-});
+  });
 
-router.get('/:id', async function (req, res, next) {
+  router.get('/:id', async function (req, res, next) {
     try {
-        const data = await User.getUser(req.params.id);
-        res.status(200).json({ data })
+      const data = await users.find({ _id: req.params.id }, { _id: 1, name: 1, phone: 1 });
+      res.status(200).json({ data });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
     }
-});
+  });
 
-router.post('/', async function (req, res, next) {
+  router.post('/', async function (req, res, next) {
     try {
-        const data = await User.addUser(req.body);
-        res.status(201).json({ data })
+      await users.insertOne({ name: req.name, phone: req.phone });
+      const data = user.find({}, { _id: 1, name: 1, phone: 1 }).sort({ _id: -1 }).limit(1);
+      res.status(201).json({ data });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
     }
-});
+  });
 
-router.put('/:id', async function (req, res, next) {
+  router.put('/:id', async function (req, res, next) {
     try {
-        const data = await User.updateUser(req.params.id);
-        res.status(201).json({ data })
+      await users.updateMany({ _id: req.params.id }, { $set: { name: req.name, phone: req.phone } });
+      const data = await users.find({ _id: req.params.id }, { _id: 1, name: 1, phone: 1 });
+      res.status(201).json({ data });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
     }
-});
+  });
 
-router.delete('/:id', async function (req, res, next) {
+  router.delete('/:id', async function (req, res, next) {
     try {
-        const data = await User.removeUser(req.params.id);
-        res.status(200).json({ data })
+      const data = await users.find({ _id: req.params.id }, { _id: 1, name: 1, phone: 1 });
+      await users.deleteMany({ _id: req.params.id });
+      res.status(200).json({ data });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+      res.status(500).json({ message: error.message });
     }
-});
-
-module.exports = router;
+  });
+}
