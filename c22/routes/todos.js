@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var ObjectId = require('mongodb').ObjectId;
+const moment = require("moment/moment");
 
 module.exports = (db) => {
     const todos = db.collection('todos');
@@ -19,8 +20,6 @@ module.exports = (db) => {
             else if (req.query.startDateDeadline) query.push({ deadline: { $gt: req.query.startDateDeadline } });
             typeof req.query.complete !== 'undefined' ? query.push({ complete: JSON.parse(req.query.complete) }) : '';
             let sort = `{"${req.query.sortBy}":${req.query.sortMode == 'desc' ? -1 : 1}}`;
-            console.log(sort);
-            console.log(query);
             const total = await todos.count({ $and: query });
             const pages = Math.ceil(total / req.query.limit);
             const data = await todos.find({ $and: query }, { _id: 1, title: 1, complete: 1, deadline: 1, executor: 1 }).sort(JSON.parse(sort)).limit(req.query.limit).skip((req.query.page - 1) * req.query.limit).toArray();
@@ -41,7 +40,7 @@ module.exports = (db) => {
 
     router.post('/', async function (req, res, next) {
         try {
-            await todos.insertOne({ title: req.body.title, executor: req.body.executor });
+            await todos.insertOne({ title: req.body.title, executor: req.body.executor, complete: false, deadline: moment(Date.now()).add(1, 'day').toISOString() });
             const data = await todos.find().sort({ _id: -1 }).limit(1).toArray();
             res.status(201).json(data[0]);
         } catch (error) {
