@@ -5,77 +5,282 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MongoDB Breads(Browse, Read, Edit, Add, Delete, Sort)</title>
-    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <div class="card">
+    <div class="card" style="width: 75%; margin:1% auto">
         <div class="card-header">
             <h1 class="h3 text-center">MongoDB Breads(Browse, Read, Edit, Add, Delete, Sort)</h1>
         </div>
         <div class="card-body">
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item">An item</li>
-                <li class="list-group-item">A second item</li>
-                <li class="list-group-item">A third item</li>
-            </ul>
-            <form action="" method="get">
-                <div class="col">
-                    <input type="text" class="form-control" id="search" name="search">
+            <form class="row gx-3 gy-2 align-items-center">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <div class="input-group-text">Show</div>
+                        <select id="limit" onchange="gantiLimit()" class="form-select"
+                            style="background-image: none;cursor: pointer;">
+                            <option selected value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="-1">all</option>
+                        </select></li>
+                        <div class="input-group-text">entries</div>
+                    </div>
                 </div>
-                <button type="submit"></button>
+                <div class="col" style="padding-right: 0;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchBar" name="query" placeholder="search">
+                    </div>
+                </div>
+                <div class="col-auto" style="padding-left: 0;">
+                    <button style="margin-right: 0;" class="btn btn-outline-secondary" type="submit" id="search"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+                    <button style="margin-left: 0;" id="reset" class="btn btn-outline-warning"><i
+                            class="fa-solid fa-rotate"></i></button>
+                </div>
             </form>
-            <!-- <a href="http://"></a>  reset-->
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th style="cursor: pointer;"
-                            onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=title`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'">
-                            <i
-                                class="fa-solid <%= query.sortBy!='title'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
-                            Title
-                        </th>
-                        <th style="cursor: pointer;"
-                            onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=complete`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'">
-                            <i
-                                class="fa-solid <%= query.sortBy!='complete'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
-                            Complete
-                        </th>
-                        <th style="cursor: pointer;"
-                            onclick="window.location.href='<%= url.replace(`sortBy=${query.sortBy}`,`sortBy=deadline`).replace(`sortMode=${query.sortMode}`,query.sortMode==`asc`?`sortMode=desc`:`sortMode=asc`)%>'">
-                            <i
-                                class="fa-solid <%= query.sortBy!='deadline'? 'fa-sort': query.sortMode=='asc'? 'fa-sort-up':'fa-sort-down' %> "></i>
-                            Deadline
-                        </th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="isi"></tbody>
-            </table>
         </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th id="sortName" style="cursor: pointer;" onclick="gantiSort('name')">
+                        <i class="fa-solid fa-sort"></i> Name
+                    </th>
+                    <th id="sortPhone" style="cursor: pointer;" onclick="gantiSort('phone')">
+                        <i class="fa-solid fa-sort"></i> Phone
+                    </th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="isi"></tbody>
+        </table>
         <div class="card-footer">
-            <!-- <a href="http://"></a> buat modal create user-->
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary float-start" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+
+            <!-- Modal -->
+
+            <div class="float-end row">
+                <p style="margin: auto;" class="col-auto" id="entries"></p>
+                <nav aria-label="Page navigation example" class="col" style="cursor: pointer;">
+                    <ul id="pagination" class="pagination"> </ul>
+                </nav>
+            </div>
+
         </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
     </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const query = { query: '', page: 1, limit: 5, sortBy: "_id", sortMode: "desc" };
+
+        document.getElementById('search').addEventListener('click', function (e) {
+            e.preventDefault();
+            query.page = 1;
+            query.query = document.getElementById('searchBar').value;
+            loadTabel();
+        })
+
+        document.getElementById('reset').addEventListener('click', function (e) {
+            e.preventDefault();
+            reset();
+        })
+
+        loadTabel();
+
+        function reset() {
+            query.query = '';
+            query.page = 1;
+            query.sortBy = "_id";
+            query.sortMode = "desc";
+            document.getElementById('searchBar').value = '';
+            document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort"></i> Name`;
+            document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort"></i> Phone`;
+            loadTabel();
+        }
+
+        async function loadTabel() {
+            try {
+                let a = new URLSearchParams(query).toString();
+                const res = await fetch("http://localhost:3000/users" + '?' + a, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                })
+                const result = await res.json();
+                let html = '';
+                result.data.forEach((element, index) => {
+                    html += `
+                <tr>
+                    <th>${Number(index) + Number(result.offset) + 1}</th>
+                    <td>${element.name}</th>
+                    <td>${element.phone}</th>
+                    <td>
+                        <a style="margin-right:1px;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#edit${index}">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+
+                        <div class="modal fade" id="edit${index}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a style="margin-right:1px;" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete${index}">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+
+                        <div class="modal fade" id="delete${index}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="btn btn-warning" href="/user/${element._id}/todos">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </a>
+                    </th>
+                </tr>`
+                });
+                document.getElementById('isi').innerHTML = html;
+                document.getElementById('entries').innerHTML = `<p>Showing ${result.offset + 1} to ${result.offset + result.data.length} of ${result.total} entries</p>`
+                html = '';
+                if (result.page > 1) html += `
+                    <li class="page-item">
+                        <a class="page-link" onClick="halaman(${Number(result.page) - 1})"  aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>`;
+                for (let index = 1; index <= result.pages; index++) {
+                    index == result.page ?
+                        html += `<li class="page-item active"><a class="page-link" onClick="halaman(${Number(index)})"  >${index}</a></li>` :
+                        html += `<li class="page-item"><a class="page-link" onClick="halaman(${Number(index)})"  >${index}</a></li>`;
+                }
+                if (result.page < result.pages) html += `
+                    <li class="page-item">
+                        <a class="page-link" onClick="halaman(${Number(result.page) + 1})" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>`;
+                document.getElementById('pagination').innerHTML = html;
+            } catch (error) {
+                console.log('gagal load tabel', error);
+            }
+        }
+
+        function gantiLimit() {
+            query.limit = document.getElementById('limit').value;
+            query.page = 1;
+            loadTabel();
+        }
+
+        function edit(id) {
+            // modal blablabla
+        }
+
+        async function hapus(id) {
+            try {
+                const res = await fetch(`http://localhost:3000/users/${id}`, {
+                    method: "DELETE"
+                })
+            } catch (error) {
+                console.log('gagal delete user', error);
+            }
+        }
+
+        function halaman(hal) {
+            query.page = hal;
+            loadTabel();
+        }
+
+        function gantiSort(str) {
+            switch (str) {
+                case 'name':
+                    if (query.sortBy != 'name') {
+                        query.sortBy = 'name';
+                        query.sortMode = 'asc';
+                        document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort-up"></i> Name`;
+                        document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort"></i> Phone`;
+                    } else if (query.sortBy == 'name' & query.sortMode == 'asc') {
+                        query.sortMode = 'desc';
+                        document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort-down"></i> Name`;
+                        document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort"></i> Phone`;
+                    } else {
+                        query.sortMode = 'asc';
+                        document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort-up"></i> Name`;
+                        document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort"></i> Phone`;
+                    }
+                    break;
+                case 'phone':
+                    if (query.sortBy != 'phone') {
+                        query.sortBy = 'phone';
+                        query.sortMode = 'asc';
+                        document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort"></i> Name`;
+                        document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort-up"></i> Phone`;
+                    } else if (query.sortBy == 'phone' & query.sortMode == 'asc') {
+                        query.sortMode = 'desc';
+                        document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort"></i> Name`;
+                        document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort-down"></i> Phone`;
+                    } else {
+                        query.sortMode = 'asc';
+                        document.getElementById('sortName').innerHTML = `<i class="fa-solid fa-sort"></i> Name`;
+                        document.getElementById('sortPhone').innerHTML = `<i class="fa-solid fa-sort-up"></i> Phone`;
+                    }
+                    break;
+            }
+            loadTabel();
+        }
+
+        function tambah(objectData) {
+
+        }
+    </script>
 </body>
 
 </html>

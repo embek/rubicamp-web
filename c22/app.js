@@ -17,17 +17,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-})
-
 async function main() {
   const url = 'mongodb://127.0.0.1:27017';
   const client = new MongoClient(url);
@@ -44,7 +33,7 @@ main().then(async db => {
   var todosRouter = require('./routes/todos')(db);
 
   app.get('/', (req, res) => res.render('users'));
-  app.get('/user/:userid', (req, res) => res.render('todos', { executor: req.params.userid }))
+  app.get('/user/:userid/todos', (req, res) => res.render('todos', { executor: req.params.userid }))
   app.use('/users', usersRouter);
   app.use('/todos', todosRouter);
 
@@ -52,6 +41,17 @@ main().then(async db => {
   app.use(function (req, res, next) {
     next(createError(404));
   });
+
+  // error handler
+  app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  })
 }).catch(error => {
   console.log('gagal baca db', error)
 })
