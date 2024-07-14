@@ -12,10 +12,10 @@ module.exports = (db) => {
       req.query.sortBy = req.query.sortBy || '_id';
       req.query.sortMode = req.query.sortMode || 'desc';
       const strSort = `{"${req.query.sortBy}":${req.query.sortMode === 'desc' ? -1 : 1}}`;
-      // console.log(strSort);
+      const total = await users.count({ $or: [{ name: new RegExp(req.query.query, 'i') }, { phone: new RegExp(req.query.query) }] });
+      if (req.query.limit == -1) req.query.limit = total;
       const offset = (req.query.page - 1) * req.query.limit;
-      const data = await users.find({ name: new RegExp(req.query.query, 'i') }, { "_id": 1, name: 1, phone: 1 }).sort(JSON.parse(strSort)).limit(req.query.limit).skip(offset).toArray();
-      const total = await users.count();
+      const data = await users.find({ $or: [{ name: new RegExp(req.query.query, 'i') }, { phone: new RegExp(req.query.query) }] }, { "_id": 1, name: 1, phone: 1 }).sort(JSON.parse(strSort)).limit(req.query.limit).skip(offset).toArray();
       const pages = Math.ceil(total / req.query.limit);
       res.status(200).json({ data, total, pages, page: req.query.page, limit: req.query.limit, offset });
     } catch (error) {

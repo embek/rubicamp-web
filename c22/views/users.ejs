@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MongoDB Breads(Browse, Read, Edit, Add, Delete, Sort)</title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/fontawesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -65,8 +67,6 @@
                 <i class="fa-solid fa-plus"></i>
             </button>
 
-            <!-- Modal -->
-
             <div class="float-end row">
                 <p style="margin: auto;" class="col-auto" id="entries"></p>
                 <nav aria-label="Page navigation example" class="col" style="cursor: pointer;">
@@ -80,15 +80,30 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">User Form</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <form>
+                        <div class="row mb-3">
+                            <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputName">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputPhone" class="col-sm-2 col-form-label">Phone</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputPhone">
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        onclick="tambah({name: document.getElementById('inputName').value,phone: document.getElementById('inputPhone').value})">Save
+                        changes</button>
                 </div>
             </div>
         </div>
@@ -146,15 +161,30 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">User Form</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        ...
+                                         <form>
+                                            <div class="row mb-3">
+                                                <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                                                <div class="col-sm-10">
+                                                    <input value="${element.name}" type="text" class="form-control" id="editName${index}">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label for="inputPhone" class="col-sm-2 col-form-label">Phone</label>
+                                                <div class="col-sm-10">
+                                                    <input value="${element.phone}" type="text" class="form-control" id="editPhone${index}">
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                                            onclick="edit({id:'${element._id}',name: document.getElementById('editName${index}').value,phone: document.getElementById('editPhone${index}').value})">Save
+                                            changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -169,15 +199,15 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        ...
+                                        are you sure?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="hapus('${element._id}')">Yes</button>
                                     </div>
                                 </div>
                             </div>
@@ -220,8 +250,20 @@
             loadTabel();
         }
 
-        function edit(id) {
-            // modal blablabla
+        async function edit(objectData) {
+            try {
+                console.log(objectData);
+                document.getElementById('inputName').value = '';
+                document.getElementById('inputPhone').value = '';
+                let res = await fetch(`http://localhost:3000/users/${objectData.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: objectData.name, phone: objectData.phone })
+                })
+                loadTabel();
+            } catch (error) {
+                console.log('gagal edit data', error)
+            }
         }
 
         async function hapus(id) {
@@ -229,6 +271,7 @@
                 const res = await fetch(`http://localhost:3000/users/${id}`, {
                     method: "DELETE"
                 })
+                loadTabel();
             } catch (error) {
                 console.log('gagal delete user', error);
             }
@@ -277,8 +320,19 @@
             loadTabel();
         }
 
-        function tambah(objectData) {
-
+        async function tambah(objectData) {
+            try {
+                document.getElementById('inputName').value = '';
+                document.getElementById('inputPhone').value = '';
+                let res = await fetch('http://localhost:3000/users', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(objectData)
+                })
+                loadTabel();
+            } catch (error) {
+                console.log('gagal tambah data', error)
+            }
         }
     </script>
 </body>
