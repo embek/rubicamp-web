@@ -19,7 +19,7 @@
             <h1 class="h3 text-center">MongoDB Breads(Browse, Read, Edit, Add, Delete, Sort)</h1>
         </div>
         <div class="card-body">
-            <form class="row gx-3 gy-2 align-items-center">
+            <form class="row gx-3 gy-2 align-items-center" id="user-search">
                 <div class="col-auto">
                     <div class="input-group">
                         <div class="input-group-text">Show</div>
@@ -113,6 +113,13 @@
     <script>
         const query = { query: '', page: 1, limit: 5, sortBy: "_id", sortMode: "desc" };
 
+        document.getElementById('user-search').addEventListener('submit', (e) => {
+            e.preventDefault();
+            query.page = 1;
+            query.query = document.getElementById('searchBar').value;
+            loadTabel();
+        })
+
         document.getElementById('search').addEventListener('click', function (e) {
             e.preventDefault();
             query.page = 1;
@@ -154,9 +161,9 @@
                     <td>${element.name}</th>
                     <td>${element.phone}</th>
                     <td>
-                        <a style="margin-right:1px;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#edit${index}">
+                        <button style="mbuttonrgin-right:1px;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#edit${index}">
                             <i class="fa-solid fa-pen"></i>
-                        </a>
+                        </button>
 
                         <div class="modal fade" id="edit${index}" tabindex="-1" aria-labelledby="exampleModalLabel"
                             aria-hidden="true">
@@ -192,9 +199,9 @@
                             </div>
                         </div>
 
-                        <a style="margin-right:1px;" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete${index}">
+                        <button style="margin-right:1px;" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete${index}">
                             <i class="fa-solid fa-trash"></i>
-                        </a>
+                        </button>
 
                         <div class="modal fade" id="delete${index}" tabindex="-1" aria-labelledby="exampleModalLabel"
                             aria-hidden="true">

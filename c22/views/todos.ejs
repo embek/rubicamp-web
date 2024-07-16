@@ -20,7 +20,7 @@
             <h1 class="h3 text-center">Todo List</h1>
         </div>
         <div class="card-body">
-            <form>
+            <form id="todo-search">
                 <div class="row mb-3">
                     <label for="title" class="col-sm-2 col-form-label">Title</label>
                     <div class="col-sm-10">
@@ -43,7 +43,7 @@
                     <label for="complete" class="col-sm-2 col-form-label">Complete</label>
                     <div class="col-sm-10">
                         <select class="form-select" name="complete" id="complete">
-                            <option disabled selected hidden>-select complete-</option>
+                            <option selected value="">-select complete-</option>
                             <option value="true">Done</option>
                             <option value="false">Not Yet</option>
                         </select>
@@ -55,21 +55,21 @@
                             deadline</a></div>
                     <div class="col-sm-10">
                         <a onclick="reset()" id="reset" class="btn btn-warning col-auto">
-                            <i class="fa-solid fa-arrows-rotate"></i></a>
-                        <a onclick="cari()" style="margin-right: 0.5em;" class="btn btn-info col-auto">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i class="fa-solid fa-arrows-rotate"></i>
                         </a>
+                        <button onclick="cari()" style="margin-right: 0.5em;" class="btn btn-info col-auto">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                     </div>
                 </div>
             </form>
 
         </div>
         <div class="card-footer">
-            <form>
+            <form id="addTodo">
                 <div class="row">
                     <input autocomplete="off" placeholder="title" type="text" class="form-control col" id="addTitle">
-                    <button type="button" id="addTodo" class="btn btn-outline-primary col-auto"
-                        onclick="$('#addTitle').val()!==''?tambah($('#addTitle').val()):''">
+                    <button type="submit" class="btn btn-outline-primary col-auto">
                         <i class="fa-solid fa-circle-down"></i>
                     </button>
                 </div>
@@ -82,16 +82,25 @@
         const executor = `<%=executor%>`;
         const limit = 10;
         const query = { page: 1, limit: 10, title: '', startdateDeadline: '', enddateDeadline: '', sortBy: '_id', sortMode: 'desc', executor, pages: 1, total: 0 }
+
         $(document).ready(() => {
             loadTabel();
 
+            $('#addTodo').submit((e) => {
+                e.preventDefault();
+                tambah($('#addTitle').val());
+            })
+
+            $('#todo-search').submit((e) => {
+                e.preventDefault();
+                cari();
+            })
+
             $(window).scroll(function () {
-                console.log($(window).scrollTop(), $(document).height() - $(window).height())
                 if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-                    console.log(query)
-                    if (query.page < query.pages) {
-                        query.page++;
-                        loadTabel('tambah')
+                    if (query.limit < query.total) {
+                        query.limit += limit;
+                        loadTabel();
                     }
                 }
             });
@@ -104,13 +113,11 @@
                     method: "GET"
                 })
                 let html = '';
-                if (arguments.length > 0) html = $('#isiTabel').html();
                 let gabung = '';
                 const result = await res.json();
                 query.pages = result.pages;
                 query.total = result.total;
                 result.data.forEach((element, index) => {
-                    let tanggal = new Date();
                     let dl = new Date(element.deadline);
                     let year = dl.getFullYear();
                     let month = (dl.getMonth() + 1).toString().padStart(2, "0");
@@ -119,80 +126,82 @@
                     let min = dl.getMinutes().toString().padStart(2, '0');
                     let timestamp = `${year}-${month}-${day}T${hour}:${min}`;
                     gabung = `
-                <div class="row alert alert-secondary" style="margin: 0.5em 0;padding:0%;height: 2.8em;">
-                    <p id="todo${index}" class="float-start col" style="margin: auto;padding: auto;">${day}-${month}-${year} ${hour}:${min} ${element.title}</p>
-                    <div class="float-end col-auto" style="margin: auto;">
-                        <a data-bs-toggle="modal" data-bs-target="#edit${index}" style="margin-right: 4px;cursor: pointer;"><i class="fa-solid fa-pen"></i></a>
-                        <a data-bs-toggle="modal" data-bs-target="#delete${index}" style="cursor: pointer;"><i class="fa-solid fa-trash"></i></a>
-                    </div>
-                    <div class="modal fade" id="edit${index}" tabindex="-1" aria-labelledby="exampleModalLabel"
-                            aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Todo</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="row mb-3">
-                                            <label for="inputTitle${index}" class="col-sm-3 col-form-label">Title</label>
-                                            <div class="col-sm-9">
-                                                <input autocomplete="off" value="${element.title}" type="text" class="form-control" id="inputTitle${index}">
-                                            </div>
+                        <div class="row alert alert-secondary" style="margin: 0.5em 0;padding:0%;height: 2.8em;">
+                            <p id="todo${element._id}" class="float-start col" style="margin: auto;padding: auto;">${day}-${month}-${year} ${hour}:${min} ${element.title}</p>
+                            <div class="float-end col-auto" style="margin: auto;">
+                                <a data-bs-toggle="modal" data-bs-target="#edit${element._id}" style="margin-right: 4px;cursor: pointer;"><i class="fa-solid fa-pen"></i></a>
+                                <a data-bs-toggle="modal" data-bs-target="#delete${element._id}" style="cursor: pointer;"><i class="fa-solid fa-trash"></i></a>
+                            </div>
+                            <div class="modal fade" id="edit${element._id}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                    aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Update Todo</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="row mb-3">
-                                            <label for="inputDl${index}" class="col-sm-3 col-form-label">Deadline</label>
-                                            <div class="col-sm-9">
-                                                <input autocomplete="off" value="${timestamp}" type="datetime-local" class="form-control" id="inputDl${index}">
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <label for="complete" class="col-sm-3 col-form-label">Complete</label>
-                                            <div class="col-sm-9">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" unchecked type="checkbox"
-                                                    id="completeTrue${index}" name="complete" value="true">
-                                                    <label class="form-check-label" for="completeTrue${index}">
-                                                        Done
-                                                    </label>
+                                        <div class="modal-body">
+                                            <form>
+                                                <div class="row mb-3">
+                                                    <label for="inputTitle${element._id}" class="col-sm-3 col-form-label">Title</label>
+                                                    <div class="col-sm-9">
+                                                        <input autocomplete="off" value="${element.title}" type="text" class="form-control" id="inputTitle${element._id}">
+                                                    </div>
                                                 </div>
+                                                <div class="row mb-3">
+                                                    <label for="inputDl${element._id}" class="col-sm-3 col-form-label">Deadline</label>
+                                                    <div class="col-sm-9">
+                                                        <input autocomplete="off" value="${timestamp}" type="datetime-local" class="form-control" id="inputDl${element._id}">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <label for="complete" class="col-sm-3 col-form-label">Complete</label>
+                                                    <div class="col-sm-9">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" unchecked type="checkbox"
+                                                            id="completeTrue${element._id}" name="complete" value="true">
+                                                            <label class="form-check-label" for="completeTrue${element._id}">
+                                                                Done
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary" onclick="edit({id:'${element._id}',title:$('#inputTitle${element._id}').val(),deadline:$('#inputDl${element._id}').val(),complete:$('#completeTrue${element._id}:checked').length})" data-bs-dismiss="modal">Save
+                                                changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="delete${element._id}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                are you sure?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                                <button type="button" class="btn btn-primary" onclick="hapus('${element._id}')" data-bs-dismiss="modal">Yes</button>
                                             </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" onclick="edit({id:'${element._id}',title:$('#inputTitle${index}').val(),deadline:$('#inputDl${index}').val(),complete:$('#completeTrue${index}:checked').length})" data-bs-dismiss="modal">Save
-                                        changes</button>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                    <div class="modal fade" id="delete${index}" tabindex="-1" aria-labelledby="exampleModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        are you sure?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                                        <button type="button" class="btn btn-primary" onclick="hapus('${element._id}')" data-bs-dismiss="modal">Yes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-                `;
+                        `;
+                    let tanggal = new Date();
+                    tanggal.setMinutes(tanggal.getMinutes() - 1);
                     if (element.complete) {
                         gabung = gabung.replace('alert-secondary', 'alert-success');
                         gabung = gabung.replace('unchecked', 'checked');
-                    } else if (dl.toISOString() < tanggal.toISOString()) gabung = gabung.replace('alert-secondary', 'alert-danger');
+                    } else if (dl < tanggal) gabung = gabung.replace('alert-secondary', 'alert-danger');
                     html += gabung;
                 })
                 $('#isiTabel').html(html);
@@ -204,10 +213,12 @@
         function cari() {
             if ($('#date1').val() != '') {
                 let tanggal1 = new Date($('#date1').val());
+                tanggal1.setMinutes(tanggal1.getMinutes() - 1);
                 query.startdateDeadline = tanggal1.toISOString();
             }
             if ($('#date2').val() != '') {
                 let tanggal2 = new Date($('#date2').val());
+                tanggal2.setMinutes(tanggal2.getMinutes() + 1);
                 query.enddateDeadline = tanggal2.toISOString();
             }
             query.title = $('#title').val();
@@ -225,28 +236,24 @@
                 query.sortMode = 'desc';
                 $('#sortDl').html('<i class="fa-solid fa-sort-down"></i> sort by deadline');
             } else {
-                query.sortBy = '_id';
-                query.sortMode = 'desc';
-                $('#sortDl').html('<i class="fa-solid fa-sort"></i> sort by deadline');
+                query.sortBy = 'deadline';
+                query.sortMode = 'asc';
+                $('#sortDl').html('<i class="fa-solid fa-sort-up"></i> sort by deadline');
             }
             loadTabel();
         }
 
         function reset() {
             delete query.complete;
+            query.limit = limit;
             query.page = 1;
             query.title = '';
             query.startdateDeadline = '';
             query.enddateDeadline = '';
             query.sortBy = '_id';
             query.sortMode = 'desc';
-            $('#title').val('');
-            $('#date1').val('');
-            $('#date2').val('');
             $('#sortDl').html('<i class="fa-solid fa-sort"></i> sort by deadline');
-            $('#complete').html(`<option value="" disabled selected hidden>-select complete-</option>
-                            <option value="true">Done</option>
-                            <option value="false">Not Yet</option>`);
+            $('#todo-search').trigger('reset');
             loadTabel();
         }
 
@@ -279,10 +286,11 @@
             try {
                 objectData.complete == 1 ? objectData.complete = true : objectData.complete = false;
                 const { id, title, deadline, complete } = objectData;
+                let dl = new Date(deadline);
                 const res = await fetch(`http://localhost:3000/todos/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title, deadline, complete })
+                    body: JSON.stringify({ title, deadline: dl.toISOString(), complete })
                 })
                 loadTabel()
             } catch (error) {
