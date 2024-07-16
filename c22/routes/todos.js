@@ -15,11 +15,12 @@ module.exports = (db) => {
             let query = [];
             query.push({ executor: req.query.executor });
             req.query.title ? query.push({ title: new RegExp(req.query.title) }) : '';
-            if (req.query.endDateDeadline && req.query.startDateDeadline) query.push({ deadline: { $lt: req.query.endDateDeadline, $gt: req.query.startDateDeadline } })
-            else if (req.query.endDateDeadline) query.push({ deadline: { $lt: req.query.endDateDeadline } })
-            else if (req.query.startDateDeadline) query.push({ deadline: { $gt: req.query.startDateDeadline } });
-            typeof req.query.complete !== 'undefined' ? query.push({ complete: JSON.parse(req.query.complete) }) : '';
+            if (req.query.enddateDeadline && req.query.startdateDeadline) query.push({ deadline: { $lt: req.query.enddateDeadline, $gt: req.query.startdateDeadline } })
+            else if (req.query.enddateDeadline) query.push({ deadline: { $lt: req.query.enddateDeadline } })
+            else if (req.query.startdateDeadline) query.push({ deadline: { $gt: req.query.startdateDeadline } });
+            (typeof req.query.complete !== 'undefined') && (req.query.complete != 'null') ? query.push({ complete: JSON.parse(req.query.complete) }) : '';
             let sort = `{"${req.query.sortBy}":${req.query.sortMode == 'desc' ? -1 : 1}}`;
+            console.log(query);
             const total = await todos.count({ $and: query });
             const pages = Math.ceil(total / req.query.limit);
             const data = await todos.find({ $and: query }, { _id: 1, title: 1, complete: 1, deadline: 1, executor: 1 }).sort(JSON.parse(sort)).limit(req.query.limit).skip((req.query.page - 1) * req.query.limit).toArray();
@@ -50,7 +51,8 @@ module.exports = (db) => {
 
     router.put('/:id', async function (req, res, next) {
         try {
-            await todos.updateOne({ _id: new ObjectId(req.params.id) }, { title: req.body.title, deadline: req.body.deadline, complete: req.body.complete });
+            console.log(typeof req.params.id);
+            await todos.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { title: req.body.title, deadline: req.body.deadline, complete: JSON.parse(req.body.complete) } });
             const data = await todos.findOne({ _id: new ObjectId(req.params.id) }, { _id: 1, title: 1, complete: 1, deadline: 1, executor: 1 });
             res.status(201).json(data);
         } catch (error) {
@@ -61,7 +63,7 @@ module.exports = (db) => {
     router.delete('/:id', async function (req, res, next) {
         try {
             const data = await todos.findOne({ _id: new ObjectId(req.params.id) }, { _id: 1, title: 1, complete: 1, deadline: 1, executor: 1 });
-            await users.deleteOne({ _id: new ObjectId(req.params.id) });
+            await todos.deleteOne({ _id: new ObjectId(req.params.id) });
             res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ message: error.message });
