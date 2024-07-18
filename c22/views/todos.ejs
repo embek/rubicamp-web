@@ -215,12 +215,12 @@
                 let tanggal1 = new Date($('#date1').val());
                 tanggal1.setMinutes(tanggal1.getMinutes() - 1);
                 query.startdateDeadline = tanggal1.toISOString();
-            }
+            } else query.startdateDeadline = ''
             if ($('#date2').val() != '') {
                 let tanggal2 = new Date($('#date2').val());
                 tanggal2.setMinutes(tanggal2.getMinutes() + 1);
                 query.enddateDeadline = tanggal2.toISOString();
-            }
+            } else query.enddateDeadline = ''
             query.title = $('#title').val();
             query.complete = $('#complete').val();
             loadTabel();
