@@ -6,7 +6,11 @@ const saltRounds = 10;
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.render('users', {name: req.session.userid.name});
+  res.render('users/listusers', { name: req.session.userid.name });
 });
+
+router.get('/add', (req, res) => {
+  res.render('users/addusers', { name: req.session.userid.name })
+})
 
 module.exports = router;
