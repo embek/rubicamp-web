@@ -13,4 +13,8 @@ router.get('/add', (req, res) => {
   res.render('users/addusers', { name: req.session.userid.name })
 })
 
+router.get('/edit/:id', (req, res) => {
+  res.render('users/edituser', { name: req.session.userid.name })
+})
+
 module.exports = router;
