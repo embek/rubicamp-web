@@ -5,18 +5,54 @@ class User {
         try {
             let sql = `INSERT INTO users(email, password) VALUES ($1,$2)`;
             await db.query(sql, [email, password]);
-        } catch (error) {
+        } catch (err) {
             console.log(err, 'gagal tambah users');
         }
     }
 
-    static async cek(email) {
+    static async edit(objectData) {
         try {
-            let sql = `SELECT * FROM users WHERE email = $1`;
-            const result = await db.query(sql, [email]);
-            return result.rows;
-        } catch (error) {
-            console.log(error, 'gagal baca users')
+            let params = [objectData.email, objectData.password, objectData.name, objectData.userid, objectData.userid];
+            let sql = `UPDATE users SET email = $1, password = $2, name = $3, role = $4 WHERE userid = $5 `;
+            await db.query(sql, params);
+        } catch (err) {
+            console.log(err, 'gagal edit users');
+        }
+    }
+
+    static async cek(data, jenisData) {//jenidData bisa berupa email atau userid
+        try {
+            let sql = `SELECT * FROM users WHERE ${jenisData} = $1`;
+            const result = await db.query(sql, [data]);
+            return result.rows[0];
+        } catch (err) {
+            console.log(err, 'gagal cek users')
+        }
+    }
+
+    static async list(query) {
+        try {
+            let sql = `SELECT * FROM users`;
+            if (query.search.value) sql += ` WHERE name LIKE '%${query.search.value}%' OR email LIKE '%${query.search.value}%'`;
+            const limit = query.length;
+            const offset = query.start;
+            const sortBy = query.columns[query.order[0].column].data;
+            const sortMode = query.order[0].dir;
+            const total = await db.query(sql.replace('*', 'count(*) AS total'));
+            sql += ` ORDER BY ${sortBy} ${sortMode}`;
+            if (limit != -1) sql += ` LIMIT ${limit} OFFSET ${offset}`;
+            const result = await db.query(sql);
+            result.rows.forEach(data => {
+                data.action = `<a class="btn btn-success btn-circle" href="/users/edit/${data.userid}"><i class="fas fa-info-circle"></i></a> <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#deleteModal" onclick="ubahDelete(${data.userid})"><i class="fas fa-trash"></i></a>`;
+            })
+            const response = {
+                "recordsTotal": total.rows[0].total,
+                "recordsFiltered": total.rows[0].total,
+                "data": result.rows
+            }
+            return response;
+        } catch (err) {
+            console.log(err, 'gagal baca users')
         }
     }
 

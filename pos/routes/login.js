@@ -12,12 +12,10 @@ router.get('/', function (req, res, next) {
 router.post('/', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const data = await User.cek(email);
-        console.log(data);
-        console.log(req.session.userid)
-        const verified = bcrypt.compareSync(password, data[0].password);
+        const data = await User.cek(email,'email');
+        const verified = bcrypt.compareSync(password, data.password);
         if (verified) {
-            req.session.userid = data[0];
+            req.session.userid = data;
             res.redirect('/dashboard')
         } else throw Error('wrong username or password')
     } catch (error) {
