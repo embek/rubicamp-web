@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
 router.post('/', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const data = await User.cek(email,'email');
+        const data = await User.cek('email', email);
         const verified = bcrypt.compareSync(password, data.password);
         if (verified) {
             req.session.userid = data;

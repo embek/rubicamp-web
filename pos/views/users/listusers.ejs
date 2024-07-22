@@ -136,16 +136,14 @@
 
     <script>
         function ubahDelete(userid) {
-            console.log(userid)
             $("#delete").attr("onclick", `hapus(${userid})`);
         }
 
-        function hapus(userid) {
-            $.ajax({
-                url: `/users/delete/${userid}`,
-                type: 'DELETE',
-                success: loadTabel()
+        async function hapus(userid) {
+            const res = await fetch(`/users/delete/${userid}`, {
+                method: "DELETE"
             })
+            console.log(res);
         }
 
         function loadTabel() {
@@ -159,7 +157,7 @@
                     { data: "userid", searchable: false },
                     { data: "email" },
                     { data: "name" },
-                    { data: "role", searchable: false, orderable: false },
+                    { data: "role", searchable: false },
                     { data: "action", searchable: false, orderable: false }
                 ]
             })

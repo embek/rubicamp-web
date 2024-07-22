@@ -1,10 +1,10 @@
 const { db } = require('./pg')
 
 class User {
-    static async add(email, password) {
+    static async add(objectData) {
         try {
-            let sql = `INSERT INTO users(email, password) VALUES ($1,$2)`;
-            await db.query(sql, [email, password]);
+            let sql = `INSERT INTO users(email,name,password,role) VALUES ($1,$2,$3,$4)`;
+            await db.query(sql, [objectData.email, objectData.name, objectData.password, objectData.role]);
         } catch (err) {
             console.log(err, 'gagal tambah users');
         }
@@ -12,15 +12,15 @@ class User {
 
     static async edit(objectData) {
         try {
-            let params = [objectData.email, objectData.password, objectData.name, objectData.userid, objectData.userid];
-            let sql = `UPDATE users SET email = $1, password = $2, name = $3, role = $4 WHERE userid = $5 `;
+            let params = [objectData.email, objectData.name, objectData.role, objectData.userid];
+            let sql = `UPDATE users SET email = $1, name = $2, role = $3 WHERE userid = $4 `;
             await db.query(sql, params);
         } catch (err) {
             console.log(err, 'gagal edit users');
         }
     }
 
-    static async cek(data, jenisData) {//jenidData bisa berupa email atau userid
+    static async cek(jenisData, data) {//jenidData bisa berupa email atau userid
         try {
             let sql = `SELECT * FROM users WHERE ${jenisData} = $1`;
             const result = await db.query(sql, [data]);

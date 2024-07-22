@@ -15,10 +15,12 @@ router.get('/add', (req, res) => {
 
 router.post('/add', async (req, res) => {
   try {
+    console.log(req.body);
     let { password } = req.body;
+    console.log(password);
     let hash = bcrypt.hashSync(password, saltRounds);
-    await User.edit({ ...req.body, password: hash });
-    res.redirect('/users');
+    await User.add({ ...req.body, password: hash });
+    res.status(201).redirect('/users');
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -27,7 +29,7 @@ router.post('/add', async (req, res) => {
 
 router.get('/edit/:id', async (req, res) => {
   try {
-    const data = await User.cek(req.params.id, 'userid');
+    const data = await User.cek('userid',req.params.id);
     res.render('users/edituser', { name: req.session.userid.name, data })
   } catch (error) {
     console.log(error);
@@ -35,12 +37,10 @@ router.get('/edit/:id', async (req, res) => {
   }
 })
 
-router.put('/edit/:id', async (req, res) => {
+router.post('/edit/:id', async (req, res) => {
   try {
-    let { email, password } = req.body;
-    let hash = bcrypt.hashSync(password, saltRounds);
-    await User.edit(req.params.id, email, hash);
-    res.redirect('/users');
+    await User.edit({ userid: req.params.id, ...req.body });
+    res.status(201).redirect('/users');
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -60,7 +60,8 @@ router.get('/data', async (req, res) => {
 
 router.delete('/delete/:id', (req, res) => {
   try {
-
+    console.log('aaa')
+    res.status(200).redirect('/users')
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
