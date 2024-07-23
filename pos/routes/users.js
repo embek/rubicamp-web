@@ -58,9 +58,9 @@ router.get('/data', async (req, res) => {
   }
 })
 
-router.delete('/delete/:id', (req, res) => {
+router.post('/delete/:id', async (req, res) => {
   try {
-    console.log('aaa')
+    await User.hapus(req.params.id)
     res.status(200).redirect('/users')
   } catch (error) {
     console.log(error);

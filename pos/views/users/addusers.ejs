@@ -55,17 +55,19 @@
                                     <form class="user" method="post">
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="inputEmail">Email</label>
-                                            <input autocomplete="off" type="email" name="email" class="form-control col-sm-10" id="inputEmail"
+                                            <input required autocomplete="off" type="email" name="email"
+                                                class="form-control col-sm-10" id="inputEmail"
                                                 aria-describedby="emailHelp" placeholder="Input Email">
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="inputName">Name</label>
-                                            <input autocomplete="off" type="text" name="name"  class="form-control col-sm-10" id="inputName"
-                                                placeholder="Input Name">
+                                            <input required autocomplete="off" type="text" name="name"
+                                                class="form-control col-sm-10" id="inputName" placeholder="Input Name">
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="inputPassword">Password</label>
-                                            <input autocomplete="off" type="password" name="password"  class="form-control col-sm-10" id="inputPassword"
+                                            <input required autocomplete="off" type="password" name="password"
+                                                class="form-control col-sm-10" id="inputPassword"
                                                 placeholder="Input Password">
                                         </div>
                                         <div class="form-group row">
@@ -114,7 +116,7 @@
                 </div>
                 <!-- End of Main Content -->
 
-                <%- include('../partials/footer') %>              
+                <%- include('../partials/footer') %>
 
             </div>
             <!-- End of Content Wrapper -->
