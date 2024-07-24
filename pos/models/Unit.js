@@ -11,10 +11,20 @@ class Unit {
         }
     }
 
+    static async cek(data) {
+        try {
+            let sql = `SELECT * FROM units WHERE unit = $1`;
+            const result = await db.query(sql, [data]);
+            return result.rows[0];
+        } catch (err) {
+            console.log(err, 'gagal cek units')
+        }
+    }
+
     static async edit(objectData) {
         try {
-            let params = [objectData.name, objectData.note, objectData.unit];
-            let sql = `UPDATE units SET name = $1, note = $2 WHERE unit = $3`;
+            let params = [objectData.name, objectData.note, objectData.unit, objectData.lama];
+            let sql = `UPDATE units SET name = $1, note = $2, unit = $3 WHERE unit = $4`;
             await db.query(sql, params);
         } catch (err) {
             console.log(err, 'gagal edit units');
@@ -34,7 +44,7 @@ class Unit {
             if (limit != -1) sql += ` LIMIT ${limit} OFFSET ${offset}`;
             const result = await db.query(sql);
             result.rows.forEach(data => {
-                data.action = `<a class="btn btn-success btn-circle" href="/units/edit/${data.unit}"><i class="fas fa-info-circle"></i></a> <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#deleteModal" onclick="ubahDelete(${data.unit})"><i class="fas fa-trash"></i></a>`;
+                data.action = `<a class="btn btn-success btn-circle" href="/units/edit/${data.unit}"><i class="fas fa-info-circle"></i></a> <a class="btn btn-danger btn-circle" data-toggle="modal" data-target="#deleteModal" onclick="ubahDelete('${data.unit}')"><i class="fas fa-trash"></i></a>`;
             })
             const response = {
                 "recordsTotal": total.rows[0].total,

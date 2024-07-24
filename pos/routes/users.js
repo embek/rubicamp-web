@@ -15,9 +15,9 @@ router.get('/add', (req, res) => {
 
 router.post('/add', async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     let { password } = req.body;
-    console.log(password);
+    // console.log(password);
     let hash = bcrypt.hashSync(password, saltRounds);
     await User.add({ ...req.body, password: hash });
     res.status(201).redirect('/users');
@@ -58,10 +58,10 @@ router.get('/data', async (req, res) => {
   }
 })
 
-router.post('/delete/:id', async (req, res) => {
+router.get('/delete/:id', async (req, res) => {
   try {
-    await User.hapus(req.params.id)
-    res.status(200).redirect('/users')
+    await User.hapus(req.params.id);
+    res.status(200).redirect('/users');
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

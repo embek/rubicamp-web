@@ -146,17 +146,7 @@
                     </tr>
                 </thead>
             </table>`);
-            $("#delete").attr("onclick", `hapus(${userid})`);
-        }
-
-        async function hapus(userid) {
-            $.ajax({
-                type: "POST",
-                url: `/users/delete/${userid}`,
-                success: function(){
-                    window.location.href = '/users'
-                }
-            })
+            $("#delete").attr("href", `/users/delete/${userid}`);
         }
 
         function loadTabel() {

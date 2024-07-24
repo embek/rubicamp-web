@@ -135,26 +135,16 @@
 
 
     <script>
-        function ubahDelete(userid) {
+        function ubahDelete(unit) {
             $('#modalBody').html(`<p>Are you sure you want to delete this item?</p>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Unit : ${userid}</th>
+                        <th>Unit : ${unit}</th>
                     </tr>
                 </thead>
             </table>`);
-            $("#delete").attr("onclick", `hapus(${userid})`);
-        }
-
-        async function hapus(userid) {
-            $.ajax({
-                type: "POST",
-                url: `/units/delete/${userid}`,
-                success: function () {
-                    window.location.href = '/units'
-                }
-            })
+            $("#delete").attr("href", `/units/delete/${unit}`);
         }
 
         function loadTabel() {
@@ -165,10 +155,9 @@
                 serverSide: true,
                 ajax: "/units/data",
                 columns: [
-                    { data: "unit", searchable: false },
+                    { data: "unit" },
                     { data: "name" },
                     { data: "note" },
-                    // { data: "role", searchable: false },
                     { data: "action", searchable: false, orderable: false }
                 ]
             })
