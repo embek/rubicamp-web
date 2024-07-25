@@ -42,15 +42,19 @@ router.get('/edit/:barcode', async (req, res) => {
 
 router.post('/edit/:barcode', async (req, res) => {
     try {
-        console.log(req.body, req.files);
         const data = await Good.cek(req.params.barcode);
-        const picturePath = path.join(__dirname, '..', 'public', 'images', 'goods', data.picture);
-        unlinkSync(picturePath);
-        const sampleFile = req.files.picture;
-        const fileName = JSON.stringify(Date.now()) + sampleFile.name;
-        const uploadPath = path.join(__dirname, '..', 'public', 'images', 'goods', fileName);
-        await sampleFile.mv(uploadPath);
-        await Good.edit({ ...req.body, picture: fileName });
+        console.log(data);
+        if (req.files?.picture) {
+            const picturePath = path.join(__dirname, '..', 'public', 'images', 'goods', data.picture);
+            unlinkSync(picturePath);
+            const sampleFile = req.files.picture;
+            const fileName = JSON.stringify(Date.now()) + sampleFile.name;
+            const uploadPath = path.join(__dirname, '..', 'public', 'images', 'goods', fileName);
+            await sampleFile.mv(uploadPath);
+            await Good.edit({ ...req.body, picture: fileName });
+        } else {
+            await Good.edit({ ...data, ...req.body })
+        }
         res.redirect('/goods');
     } catch (error) {
         console.log(error);
