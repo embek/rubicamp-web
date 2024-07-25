@@ -143,16 +143,16 @@
 
 
     <script>
-        function ubahDelete(unit) {
+        function ubahDelete(barcode) {
             $('#modalBody').html(`<p>Are you sure you want to delete this item?</p>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Unit : ${unit}</th>
+                        <th>Barcode : ${barcode}</th>
                     </tr>
                 </thead>
             </table>`);
-            $("#delete").attr("href", `/goods/delete/${unit}`);
+            $("#delete").attr("href", `/goods/delete/${barcode}`);
         }
 
         function loadTabel() {
@@ -163,9 +163,13 @@
                 serverSide: true,
                 ajax: "/goods/data",
                 columns: [
-                    { data: "unit" },
+                    { data: "barcode" },
                     { data: "name" },
-                    { data: "note" },
+                    { data: "stock", searchable: false },
+                    { data: "unit", searchable: false },
+                    { data: "purchaseprice", searchable: false },
+                    { data: "sellingprice", searchable: false },
+                    { data: "picture", searchable: false, orderable: false },
                     { data: "action", searchable: false, orderable: false }
                 ]
             })

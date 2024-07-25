@@ -51,23 +51,66 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Form Edit</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form class="user" method="post">
+                                    <form class="user" method="post" enctype="multipart/form-data">
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label" for="inputUnit">Unit</label>
-                                            <input required autocomplete="off" type="text" name="unit"
-                                                class="form-control col-sm-10" id="inputUnit" value="<%=data.unit%>"
-                                                aria-describedby="emailHelp" placeholder="Input Unit">
+                                            <label class="col-sm-2 col-form-label" for="inputBarcode">Barcode</label>
+                                            <input readonly required autocomplete="off" type="text" name="barcode"
+                                                class="form-control col-sm-10" id="inputBarcode"
+                                                placeholder="Input Barcode">
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="inputName">Name</label>
-                                            <input required autocomplete="off" type="text" name="name" value="<%=data.name%>"
+                                            <input required autocomplete="off" type="text" name="name"
                                                 class="form-control col-sm-10" id="inputName" placeholder="Input Name">
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label" for="inputNote">Note</label>
-                                            <input style="resize: vertical !important;" autocomplete="off" type="text" name="note"
-                                                class="form-control col-sm-10" id="inputNote" value="<%=data.note%>"
-                                                placeholder="Input Note">
+                                            <label class="col-sm-2 col-form-label" for="inputStock">Stock</label>
+                                            <input required autocomplete="off" type="number" name="stock"
+                                                class="form-control col-sm-10" id="inputStock"
+                                                placeholder="Input Stock">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label" for="inputPurchasePrice">Purchase
+                                                Price</label>
+                                            <input required autocomplete="off" type="number" name="purchaseprice"
+                                                class="form-control col-sm-10" id="inputPurchasePrice"
+                                                placeholder="Input Purchase Price">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label" for="inputSellingPrice">Selling
+                                                Price</label>
+                                            <input required autocomplete="off" type="number" name="sellingprice"
+                                                class="form-control col-sm-10" id="inputSellingPrice"
+                                                placeholder="Input SellingPrice">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label" for="inputUnit">Unit</label>
+                                            <select required class="form-control col-sm-10 p-2" id="inputUnit" name="unit"
+                                                aria-label="Default select example">
+                                                <option selected>Open this select menu</option>
+                                                <option value="1">One</option>
+                                                <option value="2">Two</option>
+                                                <option value="3">Three</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label" for="inputPicture">Picture</label>
+                                            <div class="input-group col p-0">
+                                                <label class="col form-control" for="inputPicture">Choose file</label>
+                                                <div class="input-group-append">
+                                                    <label for="inputPicture" class="input-group-text"
+                                                        id="basic-addon2">browse</label>
+                                                </div>
+                                            </div>
+                                            <input required hidden type="file" accept="image/*" name="picture"
+                                                class="form col-sm-10" id="inputPicture" placeholder="Input Picture"
+                                                oninput="pic.src=window.URL.createObjectURL(this.files[0])">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="preview" class="col-sm-2 col-form-label">Preview</label>
+                                            <div class="col-sm-10">
+                                                <img style="width: 75%;" id="pic">
+                                            </div>
                                         </div>
                                         <button hidden id="submitAdd" type="submit"></button>
                                     </form>
