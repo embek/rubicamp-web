@@ -34,12 +34,15 @@ class Unit {
     static async list(query) {
         try {
             let sql = `SELECT * FROM units`;
-            if (query.search.value) sql += ` WHERE name LIKE '%${query.search.value}%' OR unit LIKE '%${query.search.value}%' OR note LIKE '%${query.search.value}%'`;
-            const limit = query.length;
-            const offset = query.start;
-            const sortBy = query.columns[query.order[0].column].data;
-            const sortMode = query.order[0].dir;
             const total = await db.query(sql.replace('*', 'count(*) AS total'));
+            if (query.search?.value) sql += ` WHERE name LIKE '%${query.search?.value}%' OR unit LIKE '%${query.search?.value}%' OR note LIKE '%${query.search?.value}%'`;
+            const limit = query.length || -1;
+            const offset = query.start || 0;
+            let sortBy = 'unit';
+            let sortMode = 'asc';
+            if (query.columns) sortBy = query.columns[query.order[0].column].data || 'unit';
+            if (query.order) sortMode = query.order[0].dir || 'asc';
+            const filtered = await db.query(sql.replace('*', 'count(*) AS total'));
             sql += ` ORDER BY ${sortBy} ${sortMode}`;
             if (limit != -1) sql += ` LIMIT ${limit} OFFSET ${offset}`;
             const result = await db.query(sql);
@@ -48,7 +51,7 @@ class Unit {
             })
             const response = {
                 "recordsTotal": total.rows[0].total,
-                "recordsFiltered": total.rows[0].total,
+                "recordsFiltered": filtered.rows[0].total,
                 "data": result.rows
             }
             return response;
@@ -66,5 +69,12 @@ class Unit {
         }
     }
 }
+
+// async function daftar() {
+//     const data = await Unit.list({});
+//     console.log(data);
+// }
+
+// daftar();
 
 module.exports = Unit;

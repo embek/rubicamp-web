@@ -48,7 +48,6 @@ router.post('/edit/:id', async (req, res) => {
 })
 
 router.get('/data', async (req, res) => {
-  // console.log(req.query);
   try {
     const response = await User.list(req.query);
     res.status(200).json(response);

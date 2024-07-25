@@ -13,9 +13,11 @@ var logoutRouter = require('./routes/logout');
 var unitsRouter = require('./routes/units');
 var goodsRouter = require('./routes/goods');
 const { isLoggedIn } = require('./helpers/util');
+const fileUpload = require('express-fileupload');
 
 var app = express();
 app.use(flash());
+app.use(fileUpload());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

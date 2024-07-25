@@ -51,7 +51,7 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Form Add</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form class="user" method="post" enctype="multipart/form-data">
+                                    <form class="user" action="/goods/add" method="post" enctype="multipart/form-data">
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="inputBarcode">Barcode</label>
                                             <input required autocomplete="off" type="text" name="barcode"
@@ -87,23 +87,24 @@
                                             <label class="col-sm-2 col-form-label" for="inputUnit">Unit</label>
                                             <select required class="form-control col-sm-10" id="inputUnit" name="unit"
                                                 aria-label="Default select example">
-                                                <option selected>Open this select menu</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
+                                                <%units.forEach(item=>{%>
+                                                    <option value="<%=item%>"><%=item%></option>
+                                                <%})%>
                                             </select>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label" for="inputPicture">Picture</label>
                                             <div class="input-group col p-0">
-                                                <label class="col form-control" for="inputPicture">Choose file</label>
+                                                <label id="choose" class="col form-control" for="inputPicture">Choose
+                                                    file</label>
                                                 <div class="input-group-append">
-                                                    <label for="inputPicture" class="input-group-text" id="basic-addon2">browse</label>
+                                                    <label for="inputPicture" class="input-group-text"
+                                                        id="basic-addon2">browse</label>
                                                 </div>
                                             </div>
                                             <input required hidden type="file" accept="image/*" name="picture"
                                                 class="form col-sm-10" id="inputPicture" placeholder="Input Picture"
-                                                oninput="pic.src=window.URL.createObjectURL(this.files[0])">
+                                                oninput="pic.src=window.URL.createObjectURL(this.files[0]);document.getElementById('choose').innerHTML=this.files[0].name">
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Preview</label>
@@ -161,10 +162,8 @@
     <!-- Custom scripts for all pages-->
     <script src="/javascripts/sb-admin-2.min.js"></script>
     <script>
-        $(document).ready(function () {
-            bsCustomFileInput.init()
-        })
         //  data.picture?`src=images/${data.picture}`:''
+
     </script>
 
 </body>
