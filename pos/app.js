@@ -7,10 +7,11 @@ var session = require('express-session');
 var flash = require('connect-flash');
 
 var indexRouter = require('./routes/dashboard');
-var loginRouter = require('./routes/login')
+var loginRouter = require('./routes/login');
 var usersRouter = require('./routes/users');
 var logoutRouter = require('./routes/logout');
 var unitsRouter = require('./routes/units');
+var goodsRouter = require('./routes/goods');
 const { isLoggedIn } = require('./helpers/util');
 
 var app = express();
@@ -32,10 +33,11 @@ app.use(session({
 }))
 
 app.use('/', loginRouter);
+app.use('/logout', logoutRouter);
 app.use('/dashboard', isLoggedIn, indexRouter);
 app.use('/users', isLoggedIn, usersRouter);
-app.use('/logout', logoutRouter);
 app.use('/units', isLoggedIn, unitsRouter);
+app.use('/goods', isLoggedIn, goodsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

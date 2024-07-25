@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const Unit = require('../models/Unit')
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const Unit = require('../models/Unit');
 
 router.get('/', (req, res) => {
     res.render('units/listunits', { name: req.session.userid.name });
