@@ -34,7 +34,7 @@ class User {
     static async list(query) {
         try {
             let sql = `SELECT * FROM users`;
-            if (query.search.value) sql += ` WHERE name LIKE '%${query.search.value}%' OR email LIKE '%${query.search.value}%'`;
+            if (query.search.value) sql += ` WHERE LOWER(name) LIKE LOWER('%${query.search.value}%') OR LOWER(email) LIKE LOWER('%${query.search.value}%')`;
             const limit = query.length;
             const offset = query.start;
             const sortBy = query.columns[query.order[0].column].data;

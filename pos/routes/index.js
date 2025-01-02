@@ -16,13 +16,18 @@ router.post('/', async (req, res) => {
         const verified = bcrypt.compareSync(password, data.password);
         if (verified) {
             req.session.userid = data;
-            res.redirect('/dashboard')
-        } else throw Error('wrong username or password')
+            res.redirect('/dashboard');
+        } else throw Error('wrong email or password')
     } catch (error) {
         console.log(error);
-        req.flash('fail', 'wrong username or password');
+        req.flash('fail', 'wrong email or password');
         res.redirect('/');
     }
 })
+
+router.get('/logout', function (req, res, next) {
+    delete req.session.userid;
+    res.redirect('/')
+});
 
 module.exports = router;

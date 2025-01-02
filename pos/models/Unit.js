@@ -35,7 +35,7 @@ class Unit {
         try {
             let sql = `SELECT * FROM units`;
             const total = await db.query(sql.replace('*', 'count(*) AS total'));
-            if (query.search?.value) sql += ` WHERE name LIKE '%${query.search?.value}%' OR unit LIKE '%${query.search?.value}%' OR note LIKE '%${query.search?.value}%'`;
+            if (query.search?.value) sql += ` WHERE LOWER(name) LIKE LOWER('%${query.search?.value}%') OR LOWER(unit) LIKE LOWER('%${query.search?.value}%') OR LOWER(note) LIKE LOWER('%${query.search?.value}%')`;
             const limit = query.length || -1;
             const offset = query.start || 0;
             let sortBy = 'unit';
@@ -69,12 +69,5 @@ class Unit {
         }
     }
 }
-
-// async function daftar() {
-//     const data = await Unit.list({});
-//     console.log(data);
-// }
-
-// daftar();
 
 module.exports = Unit;

@@ -5,15 +5,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var flash = require('connect-flash');
+var fileUpload = require('express-fileupload');
 
-var indexRouter = require('./routes/dashboard');
-var loginRouter = require('./routes/login');
+var dashboardRouter = require('./routes/dashboard');
+var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var logoutRouter = require('./routes/logout');
 var unitsRouter = require('./routes/units');
 var goodsRouter = require('./routes/goods');
 const { isLoggedIn } = require('./helpers/util');
-const fileUpload = require('express-fileupload');
 
 var app = express();
 app.use(flash());
@@ -34,9 +33,8 @@ app.use(session({
   saveUninitialized: true
 }))
 
-app.use('/', loginRouter);
-app.use('/logout', logoutRouter);
-app.use('/dashboard', isLoggedIn, indexRouter);
+app.use('/', indexRouter);
+app.use('/dashboard', isLoggedIn, dashboardRouter);
 app.use('/users', isLoggedIn, usersRouter);
 app.use('/units', isLoggedIn, unitsRouter);
 app.use('/goods', isLoggedIn, goodsRouter);

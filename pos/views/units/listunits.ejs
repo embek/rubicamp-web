@@ -136,14 +136,7 @@
 
     <script>
         function ubahDelete(unit) {
-            $('#modalBody').html(`<p>Are you sure you want to delete this item?</p>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Unit : ${unit}</th>
-                    </tr>
-                </thead>
-            </table>`);
+            $('#modalBody').html(`<p>Are you sure you want to delete this item?</p>`);
             $("#delete").attr("href", `/units/delete/${unit}`);
         }
 
