@@ -111,6 +111,7 @@
         </div>
     </div>
     <script>
+        const base_url = 'http://192.168.1.20:3000';
         const query = { query: '', page: 1, limit: 5, sortBy: "_id", sortMode: "desc" };
 
         document.getElementById('user-search').addEventListener('submit', (e) => {
@@ -148,7 +149,7 @@
         async function loadTabel() {
             try {
                 let a = new URLSearchParams(query).toString();
-                const res = await fetch("http://localhost:3000/users" + '?' + a, {
+                const res = await fetch(`${base_url}/users` + '?' + a, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" }
                 })
@@ -261,7 +262,7 @@
 
         async function edit(objectData) {
             try {
-                let res = await fetch(`http://localhost:3000/users/${objectData.id}`, {
+                let res = await fetch(`${base_url}/users/${objectData.id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name: objectData.name, phone: objectData.phone })
@@ -274,7 +275,7 @@
 
         async function hapus(id) {
             try {
-                const res = await fetch(`http://localhost:3000/users/${id}`, {
+                const res = await fetch(`${base_url}/users/${id}`, {
                     method: "DELETE"
                 })
                 loadTabel();
@@ -330,7 +331,7 @@
             try {
                 document.getElementById('inputName').value = '';
                 document.getElementById('inputPhone').value = '';
-                let res = await fetch('http://localhost:3000/users', {
+                let res = await fetch(`${base_url}/users`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(objectData)

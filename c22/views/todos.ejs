@@ -79,6 +79,7 @@
         </div>
     </div>
     <script>
+        const base_url = 'http://192.168.1.20:3000';
         const executor = `<%=executor%>`;
         const limit = 10;
         const query = { page: 1, limit: 10, title: '', startdateDeadline: '', enddateDeadline: '', sortBy: '_id', sortMode: 'desc', executor, pages: 1, total: 0 }
@@ -109,7 +110,7 @@
         async function loadTabel() {
             try {
                 let a = new URLSearchParams(query).toString();
-                const res = await fetch(`http://localhost:3000/todos?${a}`, {
+                const res = await fetch(`${base_url}/todos?${a}`, {
                     method: "GET"
                 })
                 let html = '';
@@ -259,7 +260,7 @@
 
         async function tambah(title) {
             try {
-                const res = await fetch('http://localhost:3000/todos', {
+                const res = await fetch(`${base_url}/todos`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ title, executor })
@@ -273,7 +274,7 @@
 
         async function hapus(id) {
             try {
-                const res = await fetch(`http://localhost:3000/todos/${id}`, {
+                const res = await fetch(`${base_url}/todos/${id}`, {
                     method: "DELETE"
                 })
                 loadTabel();
@@ -287,7 +288,7 @@
                 objectData.complete == 1 ? objectData.complete = true : objectData.complete = false;
                 const { id, title, deadline, complete } = objectData;
                 let dl = new Date(deadline);
-                const res = await fetch(`http://localhost:3000/todos/${id}`, {
+                const res = await fetch(`${base_url}/todos/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ title, deadline: dl.toISOString(), complete })
